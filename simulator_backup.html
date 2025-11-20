@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симулятор клиники - What-If анализ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1a202c;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: #cbd5e0;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #4299e1;
+            font-weight: 600;
+        }
+
+        .tab-close {
+            color: #718096;
+            font-size: 18px;
+            line-height: 1;
+            margin-left: 5px;
+        }
+
+        .tab-close:hover {
+            color: #e53e3e;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #3182ce;
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px 40px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .form-section, .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .form-block {
+            margin-bottom: 30px;
+        }
+
+        .form-block h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        .form-group input.error {
+            border-color: #fc8181;
+        }
+
+        .form-group input.warning {
+            border-color: #f6ad55;
+        }
+
+        .error-message, .warning-message {
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .error-message {
+            color: #e53e3e;
+        }
+
+        .warning-message {
+            color: #dd6b20;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .metric-group {
+            margin-bottom: 30px;
+        }
+
+        .metric-group h2 {
+            font-size: 18px;
+            color: #1a202c;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 4px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .status-low { background: #4299e1; }
+        .status-optimal { background: #48bb78; }
+        .status-high { background: #ecc94b; }
+        .status-critical { background: #f56565; }
+
+        .comparison-view {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .comparison-controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .comparison-controls select {
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .group-header {
+            background: #edf2f7 !important;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .delta-positive {
+            color: #38a169;
+            background: #c6f6d5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .delta-negative {
+            color: #e53e3e;
+            background: #fed7d7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .delta-neutral {
+            color: #718096;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .detail-list {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .detail-list li {
+            margin-bottom: 4px;
+        }
+
+        .resource-table {
+            width: 100%;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .resource-table th,
+        .resource-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .resource-table th {
+            background: #f7fafc;
+            font-weight: 600;
+        }
+
+        .deficit {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+
+        .surplus {
+            color: #38a169;
+        }
+
+        @media (max-width: 1366px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Симулятор клиники - What-If анализ</h1>
+        <div class="scenario-tabs" id="scenarioTabs"></div>
+    </div>
+
+    <div class="container">
+        <div id="mainView" class="main-layout">
+            <div class="form-section">
+                <form id="clinicForm" onsubmit="return false;">
+                    <!-- Блок 1: Пациентопоток -->
+                    <div class="form-block">
+                        <h3>Пациентопоток</h3>
+                        <div class="form-group">
+                            <label>Количество пациентов в год</label>
+                            <input type="number" name="patients_per_year" min="10000" max="1000000" value="50000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Конверсия в операцию, %</label>
+                            <input type="number" name="conversion_rate" min="0" max="100" step="0.1" value="20">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Блок 2: Ресурсы -->
+                    <div class="form-block">
+                        <h3>Ресурсы</h3>
+                        <div class="form-group">
+                            <label>Количество врачей</label>
+                            <input type="number" name="doctors" min="1" max="500" value="10">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Количество кабинетов</label>
+                            <input type="number" name="rooms" min="1" max="200" value="8">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Количество операционных</label>
+                            <input type="number" name="operating_rooms" min="0" max="50" value="3">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Количество медсестёр</label>
+                            <input type="number" name="nurses" min="0" max="1000" value="12">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Количество администраторов</label>
+                            <input type="number" name="admins" min="0" max="200" value="3">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Блок 3: График работы -->
+                    <div class="form-block">
+                        <h3>График работы</h3>
+                        <div class="form-group">
+                            <label>Рабочих дней в неделю</label>
+                            <select name="days_per_week">
+                                <option value="5">5</option>
+                                <option value="6" selected>6</option>
+                                <option value="7">7</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Часов работы в день</label>
+                            <input type="number" name="hours_per_day" min="1" max="24" value="10">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Рабочих недель в году</label>
+                            <input type="number" name="weeks_per_year" min="40" max="52" value="50">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Блок 4: Временные параметры -->
+                    <div class="form-block">
+                        <h3>Временные параметры</h3>
+                        <div class="form-group">
+                            <label>Время консультации, мин</label>
+                            <input type="number" name="consultation_time" min="10" max="120" value="30">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Время операции, мин</label>
+                            <input type="number" name="operation_time" min="30" max="480" value="90">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Время подготовки кабинета, мин</label>
+                            <input type="number" name="room_prep_time" min="0" max="60" value="10">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Время подготовки операционной, мин</label>
+                            <input type="number" name="or_prep_time" min="0" max="180" value="30">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Доля времени врача на пациентов, %</label>
+                            <input type="number" name="doctor_patient_time" min="50" max="100" value="75">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Блок 5: Финансы -->
+                    <div class="form-block">
+                        <h3>Финансы - Выручка</h3>
+                        <div class="form-group">
+                            <label>Средний чек консультации, $</label>
+                            <input type="number" name="consultation_price" min="0" step="0.01" value="100">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Средний чек операции, $</label>
+                            <input type="number" name="operation_price" min="0" step="0.01" value="2500">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Средний чек диагностики, $</label>
+                            <input type="number" name="diagnostics_price" min="0" step="0.01" value="150">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Доля пациентов с диагностикой, %</label>
+                            <input type="number" name="diagnostics_rate" min="0" max="100" step="0.1" value="60">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Средний чек повторного приёма, $</label>
+                            <input type="number" name="followup_price" min="0" step="0.01" value="80">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Доля пациентов с повторным приёмом, %</label>
+                            <input type="number" name="followup_rate" min="0" max="100" step="0.1" value="40">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3>Финансы - Расходы на персонал (годовые)</h3>
+                        <div class="form-group">
+                            <label>Зарплата врача, $</label>
+                            <input type="number" name="doctor_salary" min="0" step="0.01" value="60000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Зарплата медсестры, $</label>
+                            <input type="number" name="nurse_salary" min="0" step="0.01" value="30000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Зарплата администратора, $</label>
+                            <input type="number" name="admin_salary" min="0" step="0.01" value="25000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Налоги от ФОТ, %</label>
+                            <input type="number" name="payroll_tax" min="0" max="100" step="0.1" value="30">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3>Финансы - Расходы на материалы</h3>
+                        <div class="form-group">
+                            <label>Материалы на консультацию, $</label>
+                            <input type="number" name="consultation_materials" min="0" step="0.01" value="10">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Материалы на операцию, $</label>
+                            <input type="number" name="operation_materials" min="0" step="0.01" value="500">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Материалы на диагностику, $</label>
+                            <input type="number" name="diagnostics_materials" min="0" step="0.01" value="30">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3>Финансы - Постоянные расходы (годовые)</h3>
+                        <div class="form-group">
+                            <label>Аренда, $</label>
+                            <input type="number" name="rent" min="0" step="0.01" value="120000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Коммуналка, $</label>
+                            <input type="number" name="utilities" min="0" step="0.01" value="24000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Амортизация оборудования, $</label>
+                            <input type="number" name="depreciation" min="0" step="0.01" value="50000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>IT системы, $</label>
+                            <input type="number" name="it_systems" min="0" step="0.01" value="15000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Маркетинг, $</label>
+                            <input type="number" name="marketing" min="0" step="0.01" value="30000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Страхование, $</label>
+                            <input type="number" name="insurance" min="0" step="0.01" value="20000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Прочие, $</label>
+                            <input type="number" name="other_expenses" min="0" step="0.01" value="10000">
+                            <div class="error-message"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Налог на прибыль, %</label>
+                            <input type="number" name="profit_tax" min="0" max="100" step="0.1" value="20">
+                            <div class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn calculate-btn" onclick="handleCalculate()">Рассчитать</button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <div id="results"><p style="color: #718096;">Нажмите "Рассчитать" для получения результатов</p></div>
+            </div>
+        </div>
+
+        <div id="comparisonView" class="comparison-view hidden"></div>
+    </div>
+
+    <script>
+        // Глобальное состояние приложения
+        const AppState = {
+            scenarios: [],
+            activeScenarioId: null,
+            comparisonMode: false
+        };
+
+        // Генерация UUID
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Сохранение в localStorage
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('clinicSimulator', JSON.stringify({
+                    scenarios: AppState.scenarios,
+                    activeScenarioId: AppState.activeScenarioId
+                }));
+            } catch(e) {
+                console.error('Error saving to localStorage:', e);
+            }
+        }
+
+        // Загрузка из localStorage
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem('clinicSimulator');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    AppState.scenarios = parsed.scenarios || [];
+                    AppState.activeScenarioId = parsed.activeScenarioId;
+                    
+                    // Если нет сценариев или их не 3, создать заново
+                    if (AppState.scenarios.length !== 3) {
+                        createDefaultScenarios();
+                    }
+                } else {
+                    createDefaultScenarios();
+                }
+            } catch(e) {
+                console.error('Error loading from localStorage:', e);
+                createDefaultScenarios();
+            }
+        }
+
+        // Создание 3 фиксированных сценариев
+        function createDefaultScenarios() {
+            const defaultParams = getFormData();
+            AppState.scenarios = [
+                {
+                    id: 'scenario-1',
+                    name: 'Сценарий 1',
+                    parameters: {...defaultParams},
+                    results: null
+                },
+                {
+                    id: 'scenario-2',
+                    name: 'Сценарий 2',
+                    parameters: {...defaultParams},
+                    results: null
+                },
+                {
+                    id: 'scenario-3',
+                    name: 'Сценарий 3',
+                    parameters: {...defaultParams},
+                    results: null
+                }
+            ];
+            AppState.activeScenarioId = 'scenario-1';
+            saveToLocalStorage();
+        }
+
+        // Получение данных формы
+        function getFormData() {
+            const form = document.getElementById('clinicForm');
+            const formData = new FormData(form);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = parseFloat(value) || 0;
+            }
+            return data;
+        }
+
+        // Установка данных в форму
+        function setFormData(parameters) {
+            const form = document.getElementById('clinicForm');
+            for (let [key, value] of Object.entries(parameters)) {
+                const input = form.elements[key];
+                if (input) {
+                    input.value = value;
+                }
+            }
+        }
+
+        // Получение активного сценария
+        function getActiveScenario() {
+            return AppState.scenarios.find(s => s.id === AppState.activeScenarioId);
+        }
+
+        // Рендер табов сценариев (3 фиксированных)
+        function renderScenarioTabs() {
+            const container = document.getElementById('scenarioTabs');
+            container.innerHTML = '';
+
+            AppState.scenarios.forEach(scenario => {
+                const tab = document.createElement('div');
+                tab.className = `tab ${scenario.id === AppState.activeScenarioId ? 'active' : ''}`;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = scenario.name;
+                nameSpan.ondblclick = () => renameScenario(scenario.id);
+                
+                tab.appendChild(nameSpan);
+                tab.onclick = () => switchScenario(scenario.id);
+                container.appendChild(tab);
+            });
+
+            // Кнопка сравнения
+            const compareBtn = document.createElement('button');
+            compareBtn.className = 'btn btn-secondary';
+            compareBtn.textContent = AppState.comparisonMode ? '← Вернуться к редактированию' : '⚖ Сравнить сценарии';
+            compareBtn.onclick = toggleComparisonMode;
+            container.appendChild(compareBtn);
+        }
+
+        // Переименовать сценарий
+        function renameScenario(id) {
+            const scenario = AppState.scenarios.find(s => s.id === id);
+            const newName = prompt('Новое название:', scenario.name);
+            if (newName && newName.trim()) {
+                scenario.name = newName.trim();
+                saveToLocalStorage();
+                renderScenarioTabs();
+            }
+        }
+
+        // Переключить сценарий
+        function switchScenario(id) {
+            const current = getActiveScenario();
+            if (current) {
+                current.parameters = getFormData();
+                saveToLocalStorage();
+            }
+
+            AppState.activeScenarioId = id;
+            const scenario = getActiveScenario();
+            setFormData(scenario.parameters);
+            
+            if (scenario.results) {
+                renderResults(scenario.results);
+            } else {
+                document.getElementById('results').innerHTML = '<p style="color: #718096;">Нажмите "Рассчитать" для получения результатов</p>';
+            }
+            
+            renderScenarioTabs();
+        }
+
+        // Валидация формы
+        function validateForm() {
+            const data = getFormData();
+            let isValid = true;
+            let warnings = [];
+
+            // Очистить предыдущие ошибки
+            document.querySelectorAll('.error-message, .warning-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('input').forEach(input => {
+                input.classList.remove('error', 'warning');
+            });
+
+            // Проверка: цена >= материалы
+            if (data.consultation_price < data.consultation_materials) {
+                showFieldError('consultation_price', 'Цена должна быть >= стоимости материалов');
+                isValid = false;
+            }
+
+            // Предупреждения
+            if (data.nurses < data.doctors) {
+                showFieldWarning('nurses', 'Медсестёр меньше, чем врачей');
+                warnings.push('Медсестёр меньше, чем врачей');
+            }
+
+            if (data.rooms < data.doctors / 2) {
+                showFieldWarning('rooms', 'Кабинетов меньше, чем врачей / 2');
+                warnings.push('Кабинетов может быть недостаточно');
+            }
+
+            if (data.conversion_rate > 50) {
+                showFieldWarning('conversion_rate', 'Конверсия выше 50% - очень высокая');
+                warnings.push('Очень высокая конверсия');
+            }
+
+            if (data.consultation_time < 10) {
+                showFieldWarning('consultation_time', 'Очень короткая консультация');
+                warnings.push('Очень короткая консультация');
+            }
+
+            if (data.hours_per_day > 16) {
+                showFieldWarning('hours_per_day', 'Более 16 часов работы - высокая нагрузка');
+                warnings.push('Очень длинный рабочий день');
+            }
+
+            return { isValid, warnings };
+        }
+
+        function showFieldError(fieldName, message) {
+            const input = document.querySelector(`[name="${fieldName}"]`);
+            if (input) {
+                input.classList.add('error');
+                const errorDiv = input.parentElement.querySelector('.error-message');
+                if (errorDiv) errorDiv.textContent = message;
+            }
+        }
+
+        function showFieldWarning(fieldName, message) {
+            const input = document.querySelector(`[name="${fieldName}"]`);
+            if (input) {
+                input.classList.add('warning');
+                const warningDiv = input.parentElement.querySelector('.warning-message, .error-message');
+                if (warningDiv) {
+                    warningDiv.textContent = message;
+                    warningDiv.className = 'warning-message';
+                }
+            }
+        }
+
+        // Главная функция расчёта
+        function handleCalculate() {
+            console.log('Calculate button clicked');
+            
+            const validation = validateForm();
+            console.log('Validation result:', validation);
+            
+            if (!validation.isValid) {
+                alert('Пожалуйста, исправьте ошибки в форме');
+                return;
+            }
+
+            if (validation.warnings.length > 0) {
+                const proceed = confirm('Обнаружены предупреждения:\n\n' + validation.warnings.join('\n') + '\n\nПродолжить расчёт?');
+                if (!proceed) return;
+            }
+
+            try {
+                const data = getFormData();
+                console.log('Form data:', data);
+                
+                const results = calculateMetrics(data);
+                console.log('Calculation results:', results);
+                
+                const scenario = getActiveScenario();
+                scenario.parameters = data;
+                scenario.results = results;
+                saveToLocalStorage();
+                
+                renderResults(results);
+                
+                alert('Расчёт выполнен успешно!');
+            } catch(e) {
+                console.error('Error during calculation:', e);
+                alert('Ошибка при расчёте: ' + e.message);
+            }
+        }
+
+        // Расчёт метрик
+        function calculateMetrics(data) {
+            const results = {};
+
+            // Рабочие часы
+            const working_days_per_year = data.days_per_week * data.weeks_per_year;
+            const working_hours_per_year = working_days_per_year * data.hours_per_day;
+
+            // 1. Пропускная способность консультаций
+            const doctor_hours_for_patients = working_hours_per_year * (data.doctor_patient_time / 100);
+            const consultation_time_with_prep = (data.consultation_time + data.room_prep_time) / 60;
+            const consultations_capacity_doctors = Math.floor(data.doctors * doctor_hours_for_patients / consultation_time_with_prep);
+            const consultations_capacity_rooms = Math.floor(data.rooms * working_hours_per_year / consultation_time_with_prep);
+            const consultations_capacity = Math.min(consultations_capacity_doctors, consultations_capacity_rooms);
+            const consultations_demand = data.patients_per_year;
+            const consultations_actual = Math.min(consultations_capacity, consultations_demand);
+            const consultations_utilization = consultations_capacity > 0 ? (consultations_actual / consultations_capacity * 100) : 0;
+            const consultations_unmet = Math.max(0, consultations_demand - consultations_capacity);
+
+            results.consultations = {
+                capacity: consultations_capacity,
+                demand: consultations_demand,
+                actual: consultations_actual,
+                utilization: consultations_utilization,
+                unmet: consultations_unmet
+            };
+
+            // 2. Пропускная способность операций
+            const operation_time_with_prep = (data.operation_time + data.or_prep_time) / 60;
+            const operations_capacity = data.operating_rooms > 0 ? Math.floor(data.operating_rooms * working_hours_per_year / operation_time_with_prep) : 0;
+            const operations_demand = Math.floor(consultations_actual * (data.conversion_rate / 100));
+            const operations_actual = Math.min(operations_capacity, operations_demand);
+            const operations_utilization = operations_capacity > 0 ? (operations_actual / operations_capacity * 100) : 0;
+            const operations_unmet = Math.max(0, operations_demand - operations_capacity);
+
+            results.operations = {
+                capacity: operations_capacity,
+                demand: operations_demand,
+                actual: operations_actual,
+                utilization: operations_utilization,
+                unmet: operations_unmet
+            };
+
+            // 3. Утилизация врачей
+            const doctor_hours_needed = consultations_actual * consultation_time_with_prep;
+            const doctor_hours_available = data.doctors * doctor_hours_for_patients;
+            const doctor_utilization = doctor_hours_available > 0 ? (doctor_hours_needed / doctor_hours_available * 100) : 0;
+
+            results.doctor_utilization = {
+                value: doctor_utilization,
+                status: getUtilizationStatus(doctor_utilization)
+            };
+
+            // 4. Утилизация кабинетов
+            const room_hours_needed = consultations_actual * consultation_time_with_prep;
+            const room_hours_available = data.rooms * working_hours_per_year;
+            const room_utilization = room_hours_available > 0 ? (room_hours_needed / room_hours_available * 100) : 0;
+
+            results.room_utilization = {
+                value: room_utilization,
+                status: getUtilizationStatus(room_utilization)
+            };
+
+            // 5. Утилизация операционных
+            const or_hours_needed = operations_actual * operation_time_with_prep;
+            const or_hours_available = data.operating_rooms * working_hours_per_year;
+            const or_utilization = or_hours_available > 0 ? (or_hours_needed / or_hours_available * 100) : 0;
+
+            results.or_utilization = {
+                value: or_utilization,
+                status: getUtilizationStatus(or_utilization)
+            };
+
+            // 6. Узкое место системы
+            const bottlenecks = [
+                { resource: 'Врачи', utilization: doctor_utilization, current: data.doctors },
+                { resource: 'Кабинеты', utilization: room_utilization, current: data.rooms },
+                { resource: 'Операционные', utilization: or_utilization, current: data.operating_rooms }
+            ];
+            const bottleneck = bottlenecks.reduce((max, item) => item.utilization > max.utilization ? item : max);
+
+            results.bottleneck = bottleneck;
+
+            // 7. Годовая выручка
+            const diagnostics_count = Math.floor(consultations_actual * (data.diagnostics_rate / 100));
+            const followup_count = Math.floor(consultations_actual * (data.followup_rate / 100));
+
+            const revenue_consultations = consultations_actual * data.consultation_price;
+            const revenue_operations = operations_actual * data.operation_price;
+            const revenue_diagnostics = diagnostics_count * data.diagnostics_price;
+            const revenue_followup = followup_count * data.followup_price;
+            const revenue_total = revenue_consultations + revenue_operations + revenue_diagnostics + revenue_followup;
+
+            results.revenue = {
+                total: revenue_total,
+                consultations: revenue_consultations,
+                operations: revenue_operations,
+                diagnostics: revenue_diagnostics,
+                followup: revenue_followup
+            };
+
+            // 8. Годовые расходы
+            const payroll_gross = data.doctors * data.doctor_salary + 
+                                  data.nurses * data.nurse_salary + 
+                                  data.admins * data.admin_salary;
+            const payroll_total = payroll_gross * (1 + data.payroll_tax / 100);
+
+            const materials_consultations = consultations_actual * data.consultation_materials;
+            const materials_operations = operations_actual * data.operation_materials;
+            const materials_diagnostics = diagnostics_count * data.diagnostics_materials;
+            const materials_total = materials_consultations + materials_operations + materials_diagnostics;
+
+            const fixed_costs = data.rent + data.utilities + data.depreciation + data.it_systems + 
+                               data.marketing + data.insurance + data.other_expenses;
+
+            const expenses_total = payroll_total + materials_total + fixed_costs;
+
+            results.expenses = {
+                total: expenses_total,
+                payroll: payroll_total,
+                materials: materials_total,
+                fixed: fixed_costs
+            };
+
+            // 9. EBITDA
+            const ebitda = revenue_total - payroll_total - materials_total - (fixed_costs - data.depreciation);
+            const ebitda_margin = revenue_total > 0 ? (ebitda / revenue_total * 100) : 0;
+
+            results.ebitda = {
+                value: ebitda,
+                margin: ebitda_margin
+            };
+
+            // 10. Чистая прибыль
+            const ebit = ebitda - data.depreciation;
+            const profit_tax_amount = ebit > 0 ? ebit * (data.profit_tax / 100) : 0;
+            const net_profit = ebit - profit_tax_amount;
+            const net_margin = revenue_total > 0 ? (net_profit / revenue_total * 100) : 0;
+
+            results.net_profit = {
+                value: net_profit,
+                margin: net_margin,
+                ebitda: ebitda,
+                depreciation: data.depreciation,
+                ebit: ebit,
+                tax: profit_tax_amount
+            };
+
+            // 11. Точка безубыточности
+            const variable_cost_per_patient = consultations_actual > 0 ? materials_total / consultations_actual : 0;
+            const avg_revenue_per_patient = consultations_actual > 0 ? revenue_total / consultations_actual : 0;
+            const contribution_margin = avg_revenue_per_patient - variable_cost_per_patient;
+            const breakeven_patients = contribution_margin > 0 ? Math.ceil((payroll_total + fixed_costs) / contribution_margin) : 0;
+            const breakeven_revenue = breakeven_patients * avg_revenue_per_patient;
+            const breakeven_days = working_days_per_year > 0 && consultations_actual > 0 ? Math.ceil(breakeven_patients / (consultations_actual / working_days_per_year)) : 0;
+            const safety_margin = consultations_actual > 0 ? ((consultations_actual - breakeven_patients) / consultations_actual * 100) : 0;
+
+            results.breakeven = {
+                patients: breakeven_patients,
+                revenue: breakeven_revenue,
+                days: breakeven_days,
+                safety_margin: safety_margin
+            };
+
+            // 12. ROI на ресурсы
+            results.roi = {
+                per_doctor: data.doctors > 0 ? net_profit / data.doctors : 0,
+                per_room: data.rooms > 0 ? net_profit / data.rooms : 0,
+                per_or: data.operating_rooms > 0 ? net_profit / data.operating_rooms : 0
+            };
+
+            // 13. Структура пациентов
+            results.patient_structure = {
+                consultations: consultations_actual,
+                operations: operations_actual,
+                operations_rate: consultations_actual > 0 ? (operations_actual / consultations_actual * 100) : 0,
+                diagnostics: diagnostics_count,
+                diagnostics_rate: data.diagnostics_rate,
+                followup: followup_count,
+                followup_rate: data.followup_rate,
+                total_visits: consultations_actual + operations_actual + diagnostics_count + followup_count,
+                unique_patients: consultations_actual
+            };
+
+            // 14. Средние показатели
+            results.averages = {
+                revenue_per_patient: consultations_actual > 0 ? revenue_total / consultations_actual : 0,
+                cost_per_patient: consultations_actual > 0 ? expenses_total / consultations_actual : 0,
+                margin_per_patient: consultations_actual > 0 ? (revenue_total - expenses_total) / consultations_actual : 0
+            };
+
+            // 15. Достаточность ресурсов
+            const doctors_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.doctors * (consultations_demand / consultations_capacity)) : data.doctors;
+            const rooms_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.rooms * (consultations_demand / consultations_capacity)) : data.rooms;
+            const or_needed = operations_capacity > 0 && operations_actual > 0 ? Math.ceil(data.operating_rooms * (operations_demand / operations_capacity)) : data.operating_rooms;
+            const nurses_needed = Math.ceil(doctors_needed * 1.2);
+
+            results.resource_adequacy = {
+                doctors: { have: data.doctors, need: doctors_needed, deficit: doctors_needed - data.doctors, utilization: doctor_utilization },
+                rooms: { have: data.rooms, need: rooms_needed, deficit: rooms_needed - data.rooms, utilization: room_utilization },
+                operating_rooms: { have: data.operating_rooms, need: or_needed, deficit: or_needed - data.operating_rooms, utilization: or_utilization },
+                nurses: { have: data.nurses, need: nurses_needed, deficit: nurses_needed - data.nurses, utilization: 0 }
+            };
+
+            return results;
+        }
+
+        function getUtilizationStatus(utilization) {
+            if (utilization < 60) return 'low';
+            if (utilization < 85) return 'optimal';
+            if (utilization < 95) return 'high';
+            return 'critical';
+        }
+
+        function getUtilizationLabel(status) {
+            const labels = {
+                low: 'Недозагрузка',
+                optimal: 'Оптимально',
+                high: 'Высокая',
+                critical: 'Перегрузка'
+            };
+            return labels[status] || '';
+        }
+
+        // Форматирование чисел
+        function formatNumber(num, decimals = 0) {
+            return num.toLocaleString('ru-RU', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        }
+
+        function formatCurrency(num) {
+            return '$' + formatNumber(num, 2);
+        }
+
+        function formatPercent(num) {
+            return formatNumber(num, 1) + '%';
+        }
+
+        // Рендер результатов
+        function renderResults(results) {
+            const container = document.getElementById('results');
+            
+            let html = '<div class="metric-group">';
+            html += '<h2>ОПЕРАЦИОННЫЕ МЕТРИКИ</h2>';
+
+            // 1. Пропускная способность консультаций
+            html += '<div class="metric-card">';
+            html += '<h3>Пропускная способность консультаций</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Доступно в год</span><span class="metric-value">${formatNumber(results.consultations.capacity)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Спрос</span><span class="metric-value">${formatNumber(results.consultations.demand)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Фактически</span><span class="metric-value">${formatNumber(results.consultations.actual)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.consultations.utilization)}</span></div>`;
+            if (results.consultations.unmet > 0) {
+                html += `<div class="metric-row"><span class="metric-label">Неудовлетворённый спрос</span><span class="metric-value deficit">${formatNumber(results.consultations.unmet)}</span></div>`;
+            }
+            html += '</div>';
+
+            // 2. Пропускная способность операций
+            html += '<div class="metric-card">';
+            html += '<h3>Пропускная способность операций</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Доступно в год</span><span class="metric-value">${formatNumber(results.operations.capacity)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Спрос</span><span class="metric-value">${formatNumber(results.operations.demand)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Фактически</span><span class="metric-value">${formatNumber(results.operations.actual)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.operations.utilization)}</span></div>`;
+            if (results.operations.unmet > 0) {
+                html += `<div class="metric-row"><span class="metric-label">Неудовлетворённый спрос</span><span class="metric-value deficit">${formatNumber(results.operations.unmet)}</span></div>`;
+            }
+            html += '</div>';
+
+            // 3-5. Утилизация
+            html += '<div class="metric-card">';
+            html += '<h3>Утилизация ресурсов</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Врачи</span><span class="metric-value">${formatPercent(results.doctor_utilization.value)} <span class="status-indicator status-${results.doctor_utilization.status}"></span> ${getUtilizationLabel(results.doctor_utilization.status)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Кабинеты</span><span class="metric-value">${formatPercent(results.room_utilization.value)} <span class="status-indicator status-${results.room_utilization.status}"></span> ${getUtilizationLabel(results.room_utilization.status)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Операционные</span><span class="metric-value">${formatPercent(results.or_utilization.value)} <span class="status-indicator status-${results.or_utilization.status}"></span> ${getUtilizationLabel(results.or_utilization.status)}</span></div>`;
+            html += '</div>';
+
+            // 6. Узкое место
+            html += '<div class="metric-card">';
+            html += '<h3>Узкое место системы</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Ресурс</span><span class="metric-value">${results.bottleneck.resource}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.bottleneck.utilization)}</span></div>`;
+            html += '</div>';
+
+            html += '</div>'; // Конец группы
+
+            // ФИНАНСОВЫЕ МЕТРИКИ
+            html += '<div class="metric-group">';
+            html += '<h2>ФИНАНСОВЫЕ МЕТРИКИ</h2>';
+
+            // 7. Выручка
+            html += '<div class="metric-card">';
+            html += '<h3>Годовая выручка</h3>';
+            html += `<div class="metric-row"><span class="metric-label"><strong>Общая сумма</strong></span><span class="metric-value"><strong>${formatCurrency(results.revenue.total)}</strong></span></div>`;
+            html += '<ul class="detail-list">';
+            html += `<li>Консультации: ${formatCurrency(results.revenue.consultations)}</li>`;
+            html += `<li>Операции: ${formatCurrency(results.revenue.operations)}</li>`;
+            html += `<li>Диагностика: ${formatCurrency(results.revenue.diagnostics)}</li>`;
+            html += `<li>Повторные приёмы: ${formatCurrency(results.revenue.followup)}</li>`;
+            html += '</ul>';
+            html += '</div>';
+
+            // 8. Расходы
+            html += '<div class="metric-card">';
+            html += '<h3>Годовые расходы</h3>';
+            html += `<div class="metric-row"><span class="metric-label"><strong>Общая сумма</strong></span><span class="metric-value"><strong>${formatCurrency(results.expenses.total)}</strong></span></div>`;
+            html += '<ul class="detail-list">';
+            html += `<li>Персонал: ${formatCurrency(results.expenses.payroll)}</li>`;
+            html += `<li>Материалы: ${formatCurrency(results.expenses.materials)}</li>`;
+            html += `<li>Постоянные расходы: ${formatCurrency(results.expenses.fixed)}</li>`;
+            html += '</ul>';
+            html += '</div>';
+
+            // 9. EBITDA
+            html += '<div class="metric-card">';
+            html += '<h3>EBITDA</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Сумма</span><span class="metric-value" style="color: ${results.ebitda.value >= 0 ? '#38a169' : '#e53e3e'}">${formatCurrency(results.ebitda.value)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">EBITDA Margin</span><span class="metric-value">${formatPercent(results.ebitda.margin)}</span></div>`;
+            html += '</div>';
+
+            // 10. Чистая прибыль
+            html += '<div class="metric-card">';
+            html += '<h3>Чистая прибыль</h3>';
+            html += `<div class="metric-row"><span class="metric-label"><strong>Сумма</strong></span><span class="metric-value" style="color: ${results.net_profit.value >= 0 ? '#38a169' : '#e53e3e'}"><strong>${formatCurrency(results.net_profit.value)}</strong></span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Net Margin</span><span class="metric-value">${formatPercent(results.net_profit.margin)}</span></div>`;
+            html += '<ul class="detail-list">';
+            html += `<li>EBITDA: ${formatCurrency(results.net_profit.ebitda)}</li>`;
+            html += `<li>Минус амортизация: ${formatCurrency(results.net_profit.depreciation)}</li>`;
+            html += `<li>= EBIT: ${formatCurrency(results.net_profit.ebit)}</li>`;
+            html += `<li>Минус налог: ${formatCurrency(results.net_profit.tax)}</li>`;
+            html += `<li>= Чистая прибыль: ${formatCurrency(results.net_profit.value)}</li>`;
+            html += '</ul>';
+            html += '</div>';
+
+            // 11. Точка безубыточности
+            html += '<div class="metric-card">';
+            html += '<h3>Точка безубыточности</h3>';
+            html += `<div class="metric-row"><span class="metric-label">В пациентах</span><span class="metric-value">${formatNumber(results.breakeven.patients)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">В деньгах</span><span class="metric-value">${formatCurrency(results.breakeven.revenue)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">В днях работы</span><span class="metric-value">${formatNumber(results.breakeven.days)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Запас прочности</span><span class="metric-value">${formatPercent(results.breakeven.safety_margin)}</span></div>`;
+            html += '</div>';
+
+            // 12. ROI
+            html += '<div class="metric-card">';
+            html += '<h3>ROI на ресурсы</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Прибыль на врача в год</span><span class="metric-value">${formatCurrency(results.roi.per_doctor)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Прибыль на кабинет в год</span><span class="metric-value">${formatCurrency(results.roi.per_room)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Прибыль на операционную в год</span><span class="metric-value">${formatCurrency(results.roi.per_or)}</span></div>`;
+            html += '</div>';
+
+            html += '</div>'; // Конец группы
+
+            // ПАЦИЕНТОПОТОК
+            html += '<div class="metric-group">';
+            html += '<h2>ПАЦИЕНТОПОТОК</h2>';
+
+            // 13. Структура пациентов
+            html += '<div class="metric-card">';
+            html += '<h3>Структура пациентов</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Первичные консультации</span><span class="metric-value">${formatNumber(results.patient_structure.consultations)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Операции (конверсия ${formatPercent(results.patient_structure.operations_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.operations)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Диагностика (${formatPercent(results.patient_structure.diagnostics_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.diagnostics)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Повторные приёмы (${formatPercent(results.patient_structure.followup_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.followup)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label"><strong>Итого визитов</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.total_visits)}</strong></span></div>`;
+            html += `<div class="metric-row"><span class="metric-label"><strong>Уникальных пациентов</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.unique_patients)}</strong></span></div>`;
+            html += '</div>';
+
+            // 14. Средние показатели
+            html += '<div class="metric-card">';
+            html += '<h3>Средние показатели</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Средний чек на пациента</span><span class="metric-value">${formatCurrency(results.averages.revenue_per_patient)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Себестоимость на пациента</span><span class="metric-value">${formatCurrency(results.averages.cost_per_patient)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Маржа на пациента</span><span class="metric-value" style="color: ${results.averages.margin_per_patient >= 0 ? '#38a169' : '#e53e3e'}">${formatCurrency(results.averages.margin_per_patient)}</span></div>`;
+            html += '</div>';
+
+            html += '</div>'; // Конец группы
+
+            // ДОСТАТОЧНОСТЬ РЕСУРСОВ
+            html += '<div class="metric-group">';
+            html += '<h2>ДОСТАТОЧНОСТЬ РЕСУРСОВ</h2>';
+
+            html += '<div class="metric-card">';
+            html += '<h3>Анализ мощностей</h3>';
+            html += '<table class="resource-table">';
+            html += '<thead><tr><th>Ресурс</th><th>Есть</th><th>Нужно</th><th>Дефицит</th><th>Утилизация</th></tr></thead>';
+            html += '<tbody>';
+            
+            for (let [key, value] of Object.entries(results.resource_adequacy)) {
+                const resourceName = {
+                    doctors: 'Врачи',
+                    rooms: 'Кабинеты',
+                    operating_rooms: 'Операционные',
+                    nurses: 'Медсёстры'
+                }[key];
+                
+                const deficitClass = value.deficit > 0 ? 'deficit' : 'surplus';
+                const deficitSign = value.deficit > 0 ? '+' : '';
+                
+                html += '<tr>';
+                html += `<td>${resourceName}</td>`;
+                html += `<td>${formatNumber(value.have)}</td>`;
+                html += `<td>${formatNumber(value.need)}</td>`;
+                html += `<td class="${deficitClass}">${deficitSign}${formatNumber(value.deficit)}</td>`;
+                html += `<td>${value.utilization > 0 ? formatPercent(value.utilization) : 'N/A'}</td>`;
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table>';
+            html += '</div>';
+
+            html += '</div>'; // Конец группы
+
+            container.innerHTML = html;
+        }
+
+        // Режим сравнения
+        function toggleComparisonMode() {
+            AppState.comparisonMode = !AppState.comparisonMode;
+            
+            if (AppState.comparisonMode) {
+                renderComparisonView();
+            } else {
+                document.getElementById('mainView').classList.remove('hidden');
+                document.getElementById('comparisonView').classList.add('hidden');
+            }
+            
+            renderScenarioTabs();
+        }
+
+        function renderComparisonView() {
+            document.getElementById('mainView').classList.add('hidden');
+            const container = document.getElementById('comparisonView');
+            container.classList.remove('hidden');
+
+            // Проверка что все сценарии рассчитаны
+            const uncalculated = AppState.scenarios.filter(s => !s.results);
+            if (uncalculated.length > 0) {
+                container.innerHTML = `
+                    <h2>Сравнение сценариев</h2>
+                    <p style="color: #e53e3e; margin: 20px 0;">Сценарии не рассчитаны: ${uncalculated.map(s => s.name).join(', ')}</p>
+                    <p style="margin-bottom: 20px;">Пожалуйста, рассчитайте все сценарии перед сравнением.</p>
+                    <button class="btn" onclick="toggleComparisonMode()">← Вернуться к редактированию</button>
+                `;
+                return;
+            }
+
+            let html = '<h2>Сравнение всех сценариев</h2>';
+            html += '<div id="comparisonTable"></div>';
+            html += '<button class="btn" style="margin-top: 30px;" onclick="toggleComparisonMode()">← Вернуться к редактированию</button>';
+
+            container.innerHTML = html;
+            
+            // Автоматически сравнить все 3 сценария
+            renderComparisonTable(AppState.scenarios);
+        }
+
+        function renderComparisonTable(scenarios) {
+            const container = document.getElementById('comparisonTable');
+
+            let html = '<table class="comparison-table">';
+            html += '<thead><tr>';
+            html += '<th>Метрика</th>';
+            scenarios.forEach(s => {
+                html += `<th>${s.name}</th>`;
+            });
+            html += '</tr></thead>';
+            html += '<tbody>';
+
+            // ОПЕРАЦИОННЫЕ МЕТРИКИ
+            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ОПЕРАЦИОННЫЕ МЕТРИКИ</td></tr>';
+            
+            html += addComparisonRow('Консультации (факт)', scenarios, s => formatNumber(s.results.consultations.actual));
+            html += addComparisonRow('Загрузка консультаций', scenarios, s => formatPercent(s.results.consultations.utilization));
+            html += addComparisonRow('Операции (факт)', scenarios, s => formatNumber(s.results.operations.actual));
+            html += addComparisonRow('Загрузка операций', scenarios, s => formatPercent(s.results.operations.utilization));
+            html += addComparisonRow('Утилизация врачей', scenarios, s => formatPercent(s.results.doctor_utilization.value));
+            html += addComparisonRow('Утилизация кабинетов', scenarios, s => formatPercent(s.results.room_utilization.value));
+            html += addComparisonRow('Утилизация операционных', scenarios, s => formatPercent(s.results.or_utilization.value));
+            html += addComparisonRow('Узкое место', scenarios, s => s.results.bottleneck.resource);
+
+            // ФИНАНСОВЫЕ МЕТРИКИ
+            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ФИНАНСОВЫЕ МЕТРИКИ</td></tr>';
+            
+            html += addComparisonRow('Годовая выручка', scenarios, s => formatCurrency(s.results.revenue.total));
+            html += addComparisonRow('Годовые расходы', scenarios, s => formatCurrency(s.results.expenses.total));
+            html += addComparisonRow('EBITDA', scenarios, s => formatCurrency(s.results.ebitda.value));
+            html += addComparisonRow('EBITDA Margin', scenarios, s => formatPercent(s.results.ebitda.margin));
+            html += addComparisonRow('Чистая прибыль', scenarios, s => formatCurrency(s.results.net_profit.value));
+            html += addComparisonRow('Net Margin', scenarios, s => formatPercent(s.results.net_profit.margin));
+            html += addComparisonRow('Точка безубыточности (пациенты)', scenarios, s => formatNumber(s.results.breakeven.patients));
+            html += addComparisonRow('Запас прочности', scenarios, s => formatPercent(s.results.breakeven.safety_margin));
+            html += addComparisonRow('ROI на врача', scenarios, s => formatCurrency(s.results.roi.per_doctor));
+
+            // ДОСТАТОЧНОСТЬ РЕСУРСОВ
+            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ДОСТАТОЧНОСТЬ РЕСУРСОВ</td></tr>';
+            
+            html += addComparisonRow('Врачи (есть)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.have));
+            html += addComparisonRow('Врачи (нужно)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.need));
+            html += addComparisonRow('Врачи (дефицит)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.deficit));
+            html += addComparisonRow('Кабинеты (есть)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.have));
+            html += addComparisonRow('Кабинеты (нужно)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.need));
+            html += addComparisonRow('Кабинеты (дефицит)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.deficit));
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function addComparisonRow(label, scenarios, valueGetter) {
+            let html = '<tr>';
+            html += `<td>${label}</td>`;
+            
+            scenarios.forEach(s => {
+                const value = valueGetter(s);
+                html += `<td>${value}</td>`;
+            });
+
+            html += '</tr>';
+            return html;
+        }
+
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('Application initializing...');
+            
+            loadFromLocalStorage();
+            renderScenarioTabs();
+            
+            const active = getActiveScenario();
+            if (active) {
+                setFormData(active.parameters);
+                if (active.results) {
+                    renderResults(active.results);
+                }
+            }
+            
+            // Автосохранение при изменении полей
+            document.getElementById('clinicForm').addEventListener('input', function() {
+                const scenario = getActiveScenario();
+                if (scenario) {
+                    scenario.parameters = getFormData();
+                    saveToLocalStorage();
+                }
+            });
+            
+            console.log('Application initialized');
+        });
+    </script>
+</body>
+</html>
