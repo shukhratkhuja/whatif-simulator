@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Симулятор Socials - What-If</title>
+    <title>Симулятор Socials - What-If (Visits Logic)</title>
     <style>
         * {
             margin: 0;
@@ -382,9 +382,6 @@
             width: 50%;
         }
 
-
-
-
         @media (max-width: 1366px) {
             .main-layout {
                 grid-template-columns: 1fr;
@@ -402,62 +399,60 @@
         <div id="mainView" class="main-layout">
             <div class="form-section">
                 <form id="clinicForm" onsubmit="return false;">
-                    <!-- Блок 1: Пациентопоток -->
                     <div class="form-block">
-                        <h3>Пациентопоток</h3>
+                        <h3>Визиты и Пациентопоток</h3>
                         <div class="form-group">
-                            <label>Количество пациентов в год</label>
-                            <input type="number" name="patients_per_year" min="10000" max="1000000" value="500000">
+                            <label>Количество визитов в год</label>
+                            <input type="number" name="total_visits_per_year" value="1750000">
                             <div class="error-message"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Конверсия в операцию, %</label>
-                            <input type="number" name="conversion_rate" min="0" max="100" step="0.1" value="5">
+                         <div class="form-group">
+                            <label>Коэффициент посещаемости</label>
+                            <input type="number" name="visit_coefficient" value="3.5" step="0.1">
+                            <div class="reference">Среднее число визитов на 1 уникального пациента</div>
                             <div class="error-message"></div>
                         </div>
                     </div>
 
-                    <!-- Блок 2: Ресурсы -->
                     <div class="form-block">
                         <h3>Ресурсы</h3>
                         <div class="form-group">
                             <label>Количество врачей</label>
-                            <input type="number" name="doctors" min="1" max="500" value="380">
+                            <input type="number" name="doctors" value="380">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество кабинетов</label>
-                            <input type="number" name="rooms" min="1" max="200" value="180">
+                            <input type="number" name="rooms" value="180">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество операционных</label>
-                            <input type="number" name="operating_rooms" min="0" max="50" value="20">
+                            <input type="number" name="operating_rooms" value="20">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество коек</label>
-                            <input type="number" name="beds" min="0" max="1000" value="500">
+                            <input type="number" name="beds" value="500">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество медсестёр</label>
-                            <input type="number" name="nurses" min="0" max="1000" value="400">
+                            <input type="number" name="nurses" value="400">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество администраторов</label>
-                            <input type="number" name="admins" min="0" max="200" value="80">
+                            <input type="number" name="admins" value="80">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Количество сервисного персонала</label>
-                            <input type="number" name="service_staff" min="0" max="1000" value="180">
+                            <input type="number" name="service_staff" value="180">
                             <div class="error-message"></div>
                         </div>
                     </div>
 
-                    <!-- Блок 3: График работы -->
                     <div class="form-block">
                         <h3>График работы</h3>
                         <div class="form-group">
@@ -470,86 +465,83 @@
                         </div>
                         <div class="form-group">
                             <label>Часов работы в день</label>
-                            <input type="number" name="hours_per_day" min="1" max="24" value="8">
+                            <input type="number" name="hours_per_day" value="8">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Рабочих недель в году</label>
-                            <input type="number" name="weeks_per_year" min="40" max="52" value="50">
+                            <input type="number" name="weeks_per_year" value="50">
                             <div class="error-message"></div>
                         </div>
                     </div>
 
-                    <!-- Блок 4: Временные параметры -->
                     <div class="form-block">
                         <h3>Временные параметры</h3>
                         <div class="form-group">
                             <label>Время консультации, мин</label>
-                            <input type="number" name="consultation_time" min="10" max="120" value="30">
+                            <input type="number" name="consultation_time" value="30">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Время операции, мин</label>
-                            <input type="number" name="operation_time" min="30" max="480" value="90">
+                            <input type="number" name="operation_time" value="90">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Время подготовки кабинета, мин</label>
-                            <input type="number" name="room_prep_time" min="0" max="60" value="5">
+                            <input type="number" name="room_prep_time" value="5">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Время подготовки операционной, мин</label>
-                            <input type="number" name="or_prep_time" min="0" max="180" value="30">
+                            <input type="number" name="or_prep_time" value="30">
                             <div class="error-message"></div>
                         </div>
                     </div>
 
-                   <!-- Блок 5: Финансы -->
-                    <div class="form-block two-col">
+                   <div class="form-block two-col">
                         
-                        <!-- Left column consultation_price-22 --> 
                         <div class="col">
                             <h3>Финансы - Выручка</h3>
 
                             <div class="form-group">
                                 <label>Средний чек консультации, $</label>
-                                <input type="number" name="consultation_price" min="0" step="0.01" value="0">
+                                <input type="number" name="consultation_price" value="0">
                                 <div class="error-message"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Средний чек операции, $</label>
-                                <input type="number" name="operation_price" min="0" step="0.01" value="500">
+                                <input type="number" name="operation_price" value="500">
+                                <div class="error-message"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Конверсия в операцию, %</label>
+                                <div class="reference">От числа уникальных пациентов</div>
+                                <input type="number" name="conversion_rate" value="5">
                                 <div class="error-message"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Средний чек диагностики, $</label>
-                                <input type="number" name="diagnostics_price" min="0" step="0.01" value="25">
+                                <input type="number" name="diagnostics_price" value="25">
                                 <div class="error-message"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Доля пациентов с диагностикой, %</label>
-                                <input type="number" name="diagnostics_rate" min="0" max="100" step="0.1" value="40">
+                                <input type="number" name="diagnostics_rate" value="40">
                                 <div class="error-message"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Средний чек повторного приёма, $</label>
-                                <input type="number" name="followup_price" min="0" step="0.01" value="0">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Доля пациентов с повторным приёмом, %</label>
-                                <input type="number" name="followup_rate" min="0" max="100" step="0.1" value="250">
+                                <input type="number" name="followup_price" value="0">
                                 <div class="error-message"></div>
                             </div>
                         </div>
 
-                        <!-- Right column -->
                         <div class="col">
                             <h3>Medline</h3>
 
@@ -564,43 +556,49 @@
                             </div>
 
                             <div class="form-group">
+                                <label>Конверсия в операцию, %</label>
+                                <input type="number" value="5" readonly>
+                            </div>
+
+                            <div class="form-group">
                                 <label>Средний чек диагностики, $</label>
                                 <input type="number" value="40" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Коэффициент посещаемости</label>
+                                <input type="number" value="3.5" readonly>
                             </div>
                         </div>
 
                     </div>
 
 
-
-
-
-
                     <div class="form-block">
                         <h3>Финансы - Расходы на персонал (годовые)</h3>
                         <div class="form-group">
                             <label>Зарплата врача, $</label>
-                            <input type="number" name="doctor_salary" min="0" step="0.01" value="24000">
+                            <input type="number" name="doctor_salary" value="24000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Зарплата медсестры, $</label>
-                            <input type="number" name="nurse_salary" min="0" step="0.01" value="6000">
+                            <input type="number" name="nurse_salary" value="6000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Зарплата администратора, $</label>
-                            <input type="number" name="admin_salary" min="0" step="0.01" value="6000">
+                            <input type="number" name="admin_salary" value="6000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Зарплата сервисного персонала, $</label>
-                            <input type="number" name="service_salary" min="0" step="0.01" value="4000">
+                            <input type="number" name="service_salary" value="4000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Налоги от ФОТ, %</label>
-                            <input type="number" name="payroll_tax" min="0" max="100" step="0.1" value="20">
+                            <input type="number" name="payroll_tax" value="20">
                             <div class="error-message"></div>
                         </div>
                     </div>
@@ -609,17 +607,17 @@
                         <h3>Финансы - Расходы на материалы</h3>
                         <div class="form-group">
                             <label>Материалы на консультацию, $</label>
-                            <input type="number" name="consultation_materials" min="0" step="0.01" value="0">
+                            <input type="number" name="consultation_materials" value="0">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Материалы на операцию, $</label>
-                            <input type="number" name="operation_materials" min="0" step="0.01" value="250">
+                            <input type="number" name="operation_materials" value="250">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Материалы на диагностику, $</label>
-                            <input type="number" name="diagnostics_materials" min="0" step="0.01" value="15">
+                            <input type="number" name="diagnostics_materials" value="15">
                             <div class="error-message"></div>
                         </div>
                     </div>
@@ -628,42 +626,42 @@
                         <h3>Финансы - Постоянные расходы (годовые)</h3>
                         <div class="form-group">
                             <label>Аренда, $</label>
-                            <input type="number" name="rent" min="0" step="0.01" value="0">
+                            <input type="number" name="rent" value="0">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Коммуналка, $</label>
-                            <input type="number" name="utilities" min="0" step="0.01" value="30000">
+                            <input type="number" name="utilities" value="30000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Амортизация оборудования, $</label>
-                            <input type="number" name="depreciation" min="0" step="0.01" value="400000">
+                            <input type="number" name="depreciation" value="400000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>IT системы, $</label>
-                            <input type="number" name="it_systems" min="0" step="0.01" value="30000">
+                            <input type="number" name="it_systems" value="30000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Маркетинг, $</label>
-                            <input type="number" name="marketing" min="0" step="0.01" value="0">
+                            <input type="number" name="marketing" value="0">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Страхование, $</label>
-                            <input type="number" name="insurance" min="0" step="0.01" value="0">
+                            <input type="number" name="insurance" value="0">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Прочие, $</label>
-                            <input type="number" name="other_expenses" min="0" step="0.01" value="10000">
+                            <input type="number" name="other_expenses" value="10000">
                             <div class="error-message"></div>
                         </div>
                         <div class="form-group">
                             <label>Налог на прибыль, %</label>
-                            <input type="number" name="profit_tax" min="0" max="100" step="0.1" value="20">
+                            <input type="number" name="profit_tax" value="20">
                             <div class="error-message"></div>
                         </div>
                     </div>
@@ -700,7 +698,7 @@
         // Сохранение в localStorage
         function saveToLocalStorage() {
             try {
-                localStorage.setItem('clinicSimulator', JSON.stringify({
+                localStorage.setItem('clinicSimulatorVisits', JSON.stringify({
                     scenarios: AppState.scenarios,
                     activeScenarioId: AppState.activeScenarioId
                 }));
@@ -712,7 +710,7 @@
         // Загрузка из localStorage
         function loadFromLocalStorage() {
             try {
-                const data = localStorage.getItem('clinicSimulator');
+                const data = localStorage.getItem('clinicSimulatorVisits');
                 if (data) {
                     const parsed = JSON.parse(data);
                     AppState.scenarios = parsed.scenarios || [];
@@ -837,30 +835,14 @@
                 input.classList.remove('error', 'warning');
             });
 
-            // Предупреждения
-            if (data.nurses < data.doctors) {
-                showFieldWarning('nurses', 'Медсестёр меньше, чем врачей');
-                warnings.push('Медсестёр меньше, чем врачей');
+            if (data.visit_coefficient < 1) {
+                showFieldError('visit_coefficient', 'Коэффициент не может быть меньше 1');
+                isValid = false;
             }
 
-            if (data.rooms < data.doctors / 2) {
-                showFieldWarning('rooms', 'Кабинетов меньше, чем врачей / 2');
-                warnings.push('Кабинетов может быть недостаточно');
-            }
-
-            if (data.conversion_rate > 50) {
-                showFieldWarning('conversion_rate', 'Конверсия выше 50% - очень высокая');
-                warnings.push('Очень высокая конверсия');
-            }
-
-            if (data.consultation_time < 10) {
-                showFieldWarning('consultation_time', 'Очень короткая консультация');
-                warnings.push('Очень короткая консультация');
-            }
-
-            if (data.hours_per_day > 16) {
-                showFieldWarning('hours_per_day', 'Более 16 часов работы - высокая нагрузка');
-                warnings.push('Очень длинный рабочий день');
+            if (data.total_visits_per_year <= 0) {
+                 showFieldError('total_visits_per_year', 'Должно быть больше 0');
+                 isValid = false;
             }
 
             return { isValid, warnings };
@@ -922,224 +904,249 @@
             }
         }
 
-        // Расчёт метрик
-        function calculateMetrics(data) {
-            const results = {};
+function calculateMetrics(data) {
+    const results = {};
 
-            // Рабочие часы
-            const working_days_per_year = data.days_per_week * data.weeks_per_year;
-            const working_hours_per_year = working_days_per_year * data.hours_per_day;
+    // --- 0. BASE CALCULATIONS (Time & Hours) ---
+    const working_days_per_year = data.days_per_week * data.weeks_per_year;
+    const working_hours_per_year = working_days_per_year * data.hours_per_day;
 
-            // 1. Пропускная способность консультаций
-            const consultation_time_with_prep = (data.consultation_time + data.room_prep_time) / 60;
-            const consultations_capacity_doctors = Math.floor(data.doctors * working_hours_per_year / consultation_time_with_prep);
-            const consultations_capacity_rooms = Math.floor(data.rooms * working_hours_per_year / consultation_time_with_prep);
-            const consultations_capacity = Math.min(consultations_capacity_doctors, consultations_capacity_rooms);
-            const consultations_demand = data.patients_per_year;
-            const consultations_actual = Math.min(consultations_capacity, consultations_demand);
-            const consultations_utilization = consultations_capacity > 0 ? (consultations_actual / consultations_capacity * 100) : 0;
-            const consultations_unmet = Math.max(0, consultations_demand - consultations_capacity);
+    // --- 1. CONSULTATIONS LOGIC (INVERTED) ---
+    
+    // Input: Total Visits Demand & Coefficient
+    const total_visits_demand = data.total_visits_per_year;
+    const visit_coefficient = data.visit_coefficient;
+    
+    // Derived: Unique Patients Demand
+    // Logic: Coefficient = Total Visits / Unique Patients => Unique = Total / Coef
+    const unique_patients_demand = visit_coefficient > 0 ? Math.floor(total_visits_demand / visit_coefficient) : 0;
 
-            results.consultations = {
-                capacity: consultations_capacity,
-                demand: consultations_demand,
-                actual: consultations_actual,
-                utilization: consultations_utilization,
-                unmet: consultations_unmet
-            };
+    // A. Capacity
+    const consultation_time_with_prep = (data.consultation_time + data.room_prep_time) / 60;
+    const consultations_capacity_doctors = Math.floor(data.doctors * working_hours_per_year / consultation_time_with_prep);
+    const consultations_capacity_rooms = Math.floor(data.rooms * working_hours_per_year / consultation_time_with_prep);
+    const consultations_capacity = Math.min(consultations_capacity_doctors, consultations_capacity_rooms);
 
-            // 2. Пропускная способность операций
-            const operation_time_with_prep = (data.operation_time + data.or_prep_time) / 60;
-            const operations_capacity = data.operating_rooms > 0 ? Math.floor(data.operating_rooms * working_hours_per_year / operation_time_with_prep) : 0;
-            const operations_demand = Math.floor(consultations_actual * (data.conversion_rate / 100));
-            const operations_actual = Math.min(operations_capacity, operations_demand);
-            const operations_utilization = operations_capacity > 0 ? (operations_actual / operations_capacity * 100) : 0;
-            const operations_unmet = Math.max(0, operations_demand - operations_capacity);
+    // C. Actuals (Based on Total Visits Demand vs Capacity)
+    const total_visits_actual = Math.min(consultations_capacity, total_visits_demand);
 
-            results.operations = {
-                capacity: operations_capacity,
-                demand: operations_demand,
-                actual: operations_actual,
-                utilization: operations_utilization,
-                unmet: operations_unmet
-            };
+    // D. Disaggregation (Actuals Split)
+    // We apply the same coefficient to the ACTUAL visits to derive actual unique patients
+    const consultations_actual = visit_coefficient > 0 ? Math.floor(total_visits_actual / visit_coefficient) : 0; // Primary/Unique
+    const followup_count = total_visits_actual - consultations_actual; // Secondary
 
-            // 7. Годовая выручка
-            const diagnostics_count = Math.floor(consultations_actual * (data.diagnostics_rate / 100));
-            const followup_count = Math.floor(consultations_actual * (data.followup_rate / 100));
+    const consultations_utilization = consultations_capacity > 0 ? (total_visits_actual / consultations_capacity * 100) : 0;
+    const consultations_unmet = Math.max(0, total_visits_demand - consultations_capacity);
 
-            const revenue_consultations = consultations_actual * data.consultation_price;
-            const revenue_operations = operations_actual * data.operation_price;
-            const revenue_diagnostics = diagnostics_count * data.diagnostics_price;
-            const revenue_followup = followup_count * data.followup_price;
-            const revenue_total = revenue_consultations + revenue_operations + revenue_diagnostics + revenue_followup;
+    results.consultations = {
+        capacity: consultations_capacity,
+        demand: total_visits_demand, // Displaying Visits Demand
+        actual: total_visits_actual,
+        primary_visits: consultations_actual,
+        followup_visits: followup_count,
+        utilization: consultations_utilization,
+        unmet: consultations_unmet
+    };
 
-            // 3. Утилизация врачей
-            const doctor_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
-            const doctor_hours_available = data.doctors * working_hours_per_year;
-            const doctor_utilization = doctor_hours_available > 0 ? (doctor_hours_needed / doctor_hours_available * 100) : 0;
+    // --- 7. REVENUE (Moved here because it needs specific counts) ---
+    const diagnostics_count = Math.floor(consultations_actual * (data.diagnostics_rate / 100));
+    
+    // --- 2. OPERATIONS LOGIC ---
+    const operation_time_with_prep = (data.operation_time + data.or_prep_time) / 60;
+    const operations_capacity = data.operating_rooms > 0 ? Math.floor(data.operating_rooms * working_hours_per_year / operation_time_with_prep) : 0;
+    
+    // Demand depends on UNIQUE patients (consultations_actual)
+    const operations_demand = Math.floor(consultations_actual * (data.conversion_rate / 100));
+    const operations_actual = Math.min(operations_capacity, operations_demand);
+    const operations_utilization = operations_capacity > 0 ? (operations_actual / operations_capacity * 100) : 0;
+    const operations_unmet = Math.max(0, operations_demand - operations_capacity);
 
-            results.doctor_utilization = {
-                value: doctor_utilization,
-                status: getUtilizationStatus(doctor_utilization)
-            };
+    results.operations = {
+        capacity: operations_capacity,
+        demand: operations_demand,
+        actual: operations_actual,
+        utilization: operations_utilization,
+        unmet: operations_unmet
+    };
 
-            // 4. Утилизация кабинетов
-            const room_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
-            const room_hours_available = data.rooms * working_hours_per_year;
-            const room_utilization = room_hours_available > 0 ? (room_hours_needed / room_hours_available * 100) : 0;
+    // --- BACK TO REVENUE CALCULATION ---
+    const revenue_consultations = consultations_actual * data.consultation_price;
+    const revenue_operations = operations_actual * data.operation_price;
+    const revenue_diagnostics = diagnostics_count * data.diagnostics_price;
+    const revenue_followup = followup_count * data.followup_price;
+    const revenue_total = revenue_consultations + revenue_operations + revenue_diagnostics + revenue_followup;
 
-            results.room_utilization = {
-                value: room_utilization,
-                status: getUtilizationStatus(room_utilization)
-            };
+    // --- 3. DOCTOR UTILIZATION ---
+    // Note: (followup_count + consultations_actual) equals total_visits_actual
+    const doctor_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
+    const doctor_hours_available = data.doctors * working_hours_per_year;
+    const doctor_utilization = doctor_hours_available > 0 ? (doctor_hours_needed / doctor_hours_available * 100) : 0;
 
-            // 5. Утилизация операционных
-            const or_hours_needed = operations_actual * operation_time_with_prep;
-            const or_hours_available = data.operating_rooms * working_hours_per_year;
-            const or_utilization = or_hours_available > 0 ? (or_hours_needed / or_hours_available * 100) : 0;
+    results.doctor_utilization = {
+        value: doctor_utilization,
+        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(doctor_utilization) : 'N/A'
+    };
 
-            results.or_utilization = {
-                value: or_utilization,
-                status: getUtilizationStatus(or_utilization)
-            };
+    // --- 4. ROOM UTILIZATION ---
+    const room_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
+    const room_hours_available = data.rooms * working_hours_per_year;
+    const room_utilization = room_hours_available > 0 ? (room_hours_needed / room_hours_available * 100) : 0;
 
-            // Утилизация коек
-            const beds_needed = Math.ceil(operations_demand / 365 * 3);
-            const beds_utilization = data.beds > 0 ? (beds_needed / data.beds * 100) : 0;
+    results.room_utilization = {
+        value: room_utilization,
+        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(room_utilization) : 'N/A'
+    };
 
-            results.beds_utilization = {
-                value: beds_utilization,
-                status: getUtilizationStatus(beds_utilization)
-            };
+    // --- 5. OR UTILIZATION ---
+    const or_hours_needed = operations_actual * operation_time_with_prep;
+    const or_hours_available = data.operating_rooms * working_hours_per_year;
+    const or_utilization = or_hours_available > 0 ? (or_hours_needed / or_hours_available * 100) : 0;
 
-            // 6. Узкое место системы
-            const bottlenecks = [
-                { resource: 'Врачи', utilization: doctor_utilization, current: data.doctors },
-                { resource: 'Кабинеты', utilization: room_utilization, current: data.rooms },
-                { resource: 'Операционные', utilization: or_utilization, current: data.operating_rooms },
-                { resource: 'Койки', utilization: beds_utilization, current: data.beds }
-            ];
-            const bottleneck = bottlenecks.reduce((max, item) => item.utilization > max.utilization ? item : max);
+    results.or_utilization = {
+        value: or_utilization,
+        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(or_utilization) : 'N/A'
+    };
 
-            results.bottleneck = bottleneck;
+    // --- BEDS UTILIZATION ---
+    const beds_needed = Math.ceil(operations_demand / 365 * 3); // Assuming 3 days stay?
+    const beds_utilization = data.beds > 0 ? (beds_needed / data.beds * 100) : 0;
 
-            results.revenue = {
-                total: revenue_total,
-                consultations: revenue_consultations,
-                operations: revenue_operations,
-                diagnostics: revenue_diagnostics,
-                followup: revenue_followup
-            };
+    results.beds_utilization = {
+        value: beds_utilization,
+        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(beds_utilization) : 'N/A'
+    };
 
-            // 8. Годовые расходы
-            const payroll_gross = data.doctors * data.doctor_salary + 
-                                  data.nurses * data.nurse_salary + 
-                                  data.admins * data.admin_salary +
-                                  data.service_staff * data.service_salary;
-            const payroll_total = payroll_gross * (1 + data.payroll_tax / 100);
+    // --- 6. BOTTLENECK ---
+    const bottlenecks = [
+        { resource: 'Врачи', utilization: doctor_utilization, current: data.doctors },
+        { resource: 'Кабинеты', utilization: room_utilization, current: data.rooms },
+        { resource: 'Операционные', utilization: or_utilization, current: data.operating_rooms },
+        { resource: 'Койки', utilization: beds_utilization, current: data.beds }
+    ];
+    const bottleneck = bottlenecks.reduce((max, item) => item.utilization > max.utilization ? item : max);
 
-            const materials_consultations = consultations_actual * data.consultation_materials;
-            const materials_operations = operations_actual * data.operation_materials;
-            const materials_diagnostics = diagnostics_count * data.diagnostics_materials;
-            const materials_total = materials_consultations + materials_operations + materials_diagnostics;
+    results.bottleneck = bottleneck;
 
-            const fixed_costs = data.rent + data.utilities + data.depreciation + data.it_systems + 
-                               data.marketing + data.insurance + data.other_expenses;
+    // --- STORE REVENUE RESULTS ---
+    results.revenue = {
+        total: revenue_total,
+        consultations: revenue_consultations,
+        operations: revenue_operations,
+        diagnostics: revenue_diagnostics,
+        followup: revenue_followup
+    };
 
-            const expenses_total = payroll_total + materials_total + fixed_costs;
+    // --- 8. EXPENSES ---
+    const payroll_gross = data.doctors * data.doctor_salary + 
+                          data.nurses * data.nurse_salary + 
+                          data.admins * data.admin_salary +
+                          data.service_staff * data.service_salary;
+    const payroll_total = payroll_gross * (1 + data.payroll_tax / 100);
 
-            results.expenses = {
-                total: expenses_total,
-                payroll: payroll_total,
-                materials: materials_total,
-                fixed: fixed_costs
-            };
+    const materials_consultations = consultations_actual * data.consultation_materials;
+    const materials_operations = operations_actual * data.operation_materials;
+    const materials_diagnostics = diagnostics_count * data.diagnostics_materials;
+    const materials_total = materials_consultations + materials_operations + materials_diagnostics;
 
-            // 9. EBITDA
-            const ebitda = revenue_total - payroll_total - materials_total - (fixed_costs - data.depreciation);
-            const ebitda_margin = revenue_total > 0 ? (ebitda / revenue_total * 100) : 0;
+    const fixed_costs = data.rent + data.utilities + data.depreciation + data.it_systems + 
+                        data.marketing + data.insurance + data.other_expenses;
 
-            results.ebitda = {
-                value: ebitda,
-                margin: ebitda_margin
-            };
+    const expenses_total = payroll_total + materials_total + fixed_costs;
 
-            // 10. Чистая прибыль
-            const ebit = ebitda - data.depreciation;
-            const profit_tax_amount = ebit > 0 ? ebit * (data.profit_tax / 100) : 0;
-            const net_profit = ebit - profit_tax_amount;
-            const net_margin = revenue_total > 0 ? (net_profit / revenue_total * 100) : 0;
+    results.expenses = {
+        total: expenses_total,
+        payroll: payroll_total,
+        materials: materials_total,
+        fixed: fixed_costs
+    };
 
-            results.net_profit = {
-                value: net_profit,
-                margin: net_margin,
-                ebitda: ebitda,
-                depreciation: data.depreciation,
-                ebit: ebit,
-                tax: profit_tax_amount
-            };
+    // --- 9. EBITDA ---
+    const ebitda = revenue_total - payroll_total - materials_total - (fixed_costs - data.depreciation);
+    const ebitda_margin = revenue_total > 0 ? (ebitda / revenue_total * 100) : 0;
 
-            // 11. Точка безубыточности
-            const variable_cost_per_patient = consultations_actual > 0 ? materials_total / consultations_actual : 0;
-            const avg_revenue_per_patient = consultations_actual > 0 ? revenue_total / consultations_actual : 0;
-            const contribution_margin = avg_revenue_per_patient - variable_cost_per_patient;
-            const breakeven_patients = contribution_margin > 0 ? Math.ceil((payroll_total + fixed_costs) / contribution_margin) : 0;
-            const breakeven_revenue = breakeven_patients * avg_revenue_per_patient;
-            const breakeven_days = working_days_per_year > 0 && consultations_actual > 0 ? Math.ceil(breakeven_patients / (consultations_actual / working_days_per_year)) : 0;
-            const safety_margin = consultations_actual > 0 ? ((consultations_actual - breakeven_patients) / consultations_actual * 100) : 0;
+    results.ebitda = {
+        value: ebitda,
+        margin: ebitda_margin
+    };
 
-            results.breakeven = {
-                patients: breakeven_patients,
-                revenue: breakeven_revenue,
-                days: breakeven_days,
-                safety_margin: safety_margin
-            };
+    // --- 10. NET PROFIT ---
+    const ebit = ebitda - data.depreciation;
+    const profit_tax_amount = ebit > 0 ? ebit * (data.profit_tax / 100) : 0;
+    const net_profit = ebit - profit_tax_amount;
+    const net_margin = revenue_total > 0 ? (net_profit / revenue_total * 100) : 0;
 
-            // 12. ROI на ресурсы
-            results.roi = {
-                per_doctor: data.doctors > 0 ? net_profit / data.doctors : 0,
-                per_room: data.rooms > 0 ? net_profit / data.rooms : 0,
-                per_or: data.operating_rooms > 0 ? net_profit / data.operating_rooms : 0
-            };
+    results.net_profit = {
+        value: net_profit,
+        margin: net_margin,
+        ebitda: ebitda,
+        depreciation: data.depreciation,
+        ebit: ebit,
+        tax: profit_tax_amount
+    };
 
-            // 13. Структура пациентов
-            results.patient_structure = {
-                consultations: consultations_actual,
-                operations: operations_actual,
-                operations_rate: consultations_actual > 0 ? (operations_actual / consultations_actual * 100) : 0,
-                diagnostics: diagnostics_count,
-                diagnostics_rate: data.diagnostics_rate,
-                followup: followup_count,
-                followup_rate: data.followup_rate,
-                total_visits: consultations_actual + operations_actual + diagnostics_count + followup_count,
-                unique_patients: consultations_actual
-            };
+    // --- 11. BREAKEVEN ---
+    const variable_cost_per_patient = consultations_actual > 0 ? materials_total / consultations_actual : 0;
+    const avg_revenue_per_patient = consultations_actual > 0 ? revenue_total / consultations_actual : 0;
+    const contribution_margin = avg_revenue_per_patient - variable_cost_per_patient;
+    const breakeven_patients = contribution_margin > 0 ? Math.ceil((payroll_total + fixed_costs) / contribution_margin) : 0;
+    const breakeven_revenue = breakeven_patients * avg_revenue_per_patient;
+    const breakeven_days = working_days_per_year > 0 && consultations_actual > 0 ? Math.ceil(breakeven_patients / (consultations_actual / working_days_per_year)) : 0;
+    const safety_margin = consultations_actual > 0 ? ((consultations_actual - breakeven_patients) / consultations_actual * 100) : 0;
 
-            // 14. Средние показатели
-            results.averages = {
-                revenue_per_patient: consultations_actual > 0 ? revenue_total / consultations_actual : 0,
-                cost_per_patient: consultations_actual > 0 ? expenses_total / consultations_actual : 0,
-                margin_per_patient: consultations_actual > 0 ? (revenue_total - expenses_total) / consultations_actual : 0
-            };
+    results.breakeven = {
+        patients: breakeven_patients,
+        revenue: breakeven_revenue,
+        days: breakeven_days,
+        safety_margin: safety_margin
+    };
 
-            // 15. Достаточность ресурсов
-            const doctors_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.doctors * ((consultations_demand + followup_count) / consultations_capacity)) : data.doctors;
-            const rooms_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.rooms * ((consultations_demand + followup_count)  / consultations_capacity)) : data.rooms;
-            const or_needed = operations_capacity > 0 && operations_actual > 0 ? Math.ceil(data.operating_rooms * (operations_demand / operations_capacity)) : data.operating_rooms;
-            const nurses_needed = Math.ceil(doctors_needed * 1.2);
+    // --- 12. ROI ---
+    results.roi = {
+        per_doctor: data.doctors > 0 ? net_profit / data.doctors : 0,
+        per_room: data.rooms > 0 ? net_profit / data.rooms : 0,
+        per_or: data.operating_rooms > 0 ? net_profit / data.operating_rooms : 0
+    };
 
-            results.resource_adequacy = {
-                doctors: { have: data.doctors, need: doctors_needed, deficit: doctors_needed - data.doctors, utilization: doctor_utilization },
-                rooms: { have: data.rooms, need: rooms_needed, deficit: rooms_needed - data.rooms, utilization: room_utilization },
-                operating_rooms: { have: data.operating_rooms, need: or_needed, deficit: or_needed - data.operating_rooms, utilization: or_utilization },
-                beds: { have: data.beds, need: beds_needed, deficit: beds_needed - data.beds, utilization: beds_utilization },
-                nurses: { have: data.nurses, need: nurses_needed, deficit: nurses_needed - data.nurses, utilization: 0 }
-            };
+    // --- 13. PATIENT STRUCTURE ---
+    // Calculate effective Followup Rate for display
+    const effective_followup_rate = consultations_actual > 0 ? (followup_count / consultations_actual * 100) : 0;
 
-            return results;
-        }
+    results.patient_structure = {
+        consultations: consultations_actual,
+        operations: operations_actual,
+        operations_rate: consultations_actual > 0 ? (operations_actual / consultations_actual * 100) : 0,
+        diagnostics: diagnostics_count,
+        diagnostics_rate: data.diagnostics_rate,
+        followup: followup_count,
+        followup_rate: effective_followup_rate, // Calculated derived rate
+        total_visits: consultations_actual + operations_actual + diagnostics_count + followup_count, 
+        display_total: consultations_actual + operations_actual + diagnostics_count + followup_count,
+        unique_patients: consultations_actual
+    };
 
+    // --- 14. AVERAGES ---
+    results.averages = {
+        revenue_per_patient: consultations_actual > 0 ? revenue_total / consultations_actual : 0,
+        cost_per_patient: consultations_actual > 0 ? expenses_total / consultations_actual : 0,
+        margin_per_patient: consultations_actual > 0 ? (revenue_total - expenses_total) / consultations_actual : 0
+    };
+
+    // --- 15. RESOURCE ADEQUACY ---
+    const doctors_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.doctors * ((total_visits_demand) / consultations_capacity)) : data.doctors;
+    const rooms_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.rooms * ((total_visits_demand)  / consultations_capacity)) : data.rooms;
+    const or_needed = operations_capacity > 0 && operations_actual > 0 ? Math.ceil(data.operating_rooms * (operations_demand / operations_capacity)) : data.operating_rooms;
+    const nurses_needed = Math.ceil(doctors_needed * 1.2);
+
+    results.resource_adequacy = {
+        doctors: { have: data.doctors, need: doctors_needed, deficit: doctors_needed - data.doctors, utilization: doctor_utilization },
+        rooms: { have: data.rooms, need: rooms_needed, deficit: rooms_needed - data.rooms, utilization: room_utilization },
+        operating_rooms: { have: data.operating_rooms, need: or_needed, deficit: or_needed - data.operating_rooms, utilization: or_utilization },
+        beds: { have: data.beds, need: beds_needed, deficit: beds_needed - data.beds, utilization: beds_utilization },
+        nurses: { have: data.nurses, need: nurses_needed, deficit: nurses_needed - data.nurses, utilization: 0 }
+    };
+
+    return results;
+}
         function getUtilizationStatus(utilization) {
             if (utilization < 60) return 'low';
             if (utilization < 85) return 'optimal';
@@ -1179,12 +1186,11 @@
 
             // 1. Пропускная способность консультаций
             html += '<div class="metric-card">';
-            html += '<h3>Пропускная способность консультаций</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Доступно в год</span><span class="metric-value">${formatNumber(results.consultations.capacity)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Спрос</span><span class="metric-value">${formatNumber(results.consultations.demand)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Фактически</span><span class="metric-value">${formatNumber(results.consultations.actual)}</span></div>`;
+            html += '<h3>Пропускная способность (Визиты)</h3>';
+            html += `<div class="metric-row"><span class="metric-label">Доступно визитов в год</span><span class="metric-value">${formatNumber(results.consultations.capacity)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Спрос (Визиты)</span><span class="metric-value">${formatNumber(results.consultations.demand)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Фактически визитов</span><span class="metric-value">${formatNumber(results.consultations.actual)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Фактически в день</span><span class="metric-value">${formatNumber(results.consultations.actual/250)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Фактически в месяц</span><span class="metric-value">${formatNumber(results.consultations.actual/12)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.consultations.utilization)}</span></div>`;
             if (results.consultations.unmet > 0) {
                 html += `<div class="metric-row"><span class="metric-label">Неудовлетворённый спрос</span><span class="metric-value deficit">${formatNumber(results.consultations.unmet)} (${formatNumber((results.consultations.demand/results.consultations.capacity * 100) - 100)}%)</span></div>`;
@@ -1195,7 +1201,7 @@
             html += '<div class="metric-card">';
             html += '<h3>Пропускная способность операций</h3>';
             html += `<div class="metric-row"><span class="metric-label">Доступно в год</span><span class="metric-value">${formatNumber(results.operations.capacity)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Спрос</span><span class="metric-value">${formatNumber(results.operations.demand)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Спрос (на основе уникальных)</span><span class="metric-value">${formatNumber(results.operations.demand)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Фактически</span><span class="metric-value">${formatNumber(results.operations.actual)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.operations.utilization)}</span></div>`;
             if (results.operations.unmet > 0) {
@@ -1267,7 +1273,7 @@
             // 11. Точка безубыточности
             html += '<div class="metric-card">';
             html += '<h3>Точка безубыточности</h3>';
-            html += `<div class="metric-row"><span class="metric-label">В пациентах</span><span class="metric-value">${formatNumber(results.breakeven.patients)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">В уникальных пациентах</span><span class="metric-value">${formatNumber(results.breakeven.patients)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">В деньгах</span><span class="metric-value">${formatCurrency(results.breakeven.revenue)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">В днях работы</span><span class="metric-value">${formatNumber(results.breakeven.days)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Запас прочности</span><span class="metric-value">${formatPercent(results.breakeven.safety_margin)}</span></div>`;
@@ -1285,16 +1291,16 @@
 
             // ПАЦИЕНТОПОТОК
             html += '<div class="metric-group">';
-            html += '<h2>ПАЦИЕНТОПОТОК</h2>';
+            html += '<h2>ПАЦИЕНТОПОТОК (Расчетный)</h2>';
 
             // 13. Структура пациентов
             html += '<div class="metric-card">';
             html += '<h3>Структура пациентов</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Первичные консультации</span><span class="metric-value">${formatNumber(results.patient_structure.consultations)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Первичные консультации (Уник.)</span><span class="metric-value">${formatNumber(results.patient_structure.consultations)}</span></div>`;
+            html += `<div class="metric-row"><span class="metric-label">Повторные приёмы (Расчет: ${formatPercent(results.patient_structure.followup_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.followup)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Операции (конверсия ${formatPercent(results.patient_structure.operations_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.operations)}</span></div>`;
             html += `<div class="metric-row"><span class="metric-label">Диагностика (${formatPercent(results.patient_structure.diagnostics_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.diagnostics)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Повторные приёмы (${formatPercent(results.patient_structure.followup_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.followup)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label"><strong>Итого визитов</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.total_visits)}</strong></span></div>`;
+            html += `<div class="metric-row"><span class="metric-label"><strong>Итого действий</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.display_total)}</strong></span></div>`;
             html += `<div class="metric-row"><span class="metric-label"><strong>Уникальных пациентов</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.unique_patients)}</strong></span></div>`;
             html += '</div>';
 
