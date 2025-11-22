@@ -3,395 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Симулятор Socials - What-If (Visits Logic)</title>
+    <title>Симулятор Socials - Final (Bed Days)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f5f7fa; color: #2d3748; line-height: 1.6; }
+        
+        /* Layout */
+        .container { max-width: 1920px; margin: 0 auto; padding: 20px 40px; }
+        .header { background: white; padding: 20px 40px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .header h1 { font-size: 24px; margin-bottom: 15px; color: #1a202c; }
+        .main-layout { display: grid; grid-template-columns: 35% 65%; gap: 30px; align-items: start; }
+        
+        /* Form Elements */
+        .form-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .form-block { margin-bottom: 25px; border-bottom: 1px solid #edf2f7; padding-bottom: 20px; }
+        .form-block:last-child { border-bottom: none; }
+        .form-block h3 { font-size: 16px; margin-bottom: 15px; font-weight: 700; color: #2d3748; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #4a5568; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 14px; }
+        .two-col { display: flex; gap: 15px; }
+        .two-col .col, .two-col .form-group { flex: 1; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            color: #2d3748;
-            line-height: 1.6;
-        }
+        .btn { width: 100%; padding: 12px; background: #4299e1; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #3182ce; }
 
-        .header {
-            background: white;
-            padding: 20px 40px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        /* Results & Metrics */
+        .results-section { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .metric-group { margin-bottom: 30px; }
+        .metric-group h2 { font-size: 18px; color: #1a202c; margin-bottom: 15px; padding: 10px; background: #edf2f7; border-radius: 4px; }
+        
+        .metric-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .metric-card h3 { font-size: 15px; margin-bottom: 15px; color: #2d3748; font-weight: 700; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        
+        .metric-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; border-bottom: 1px dashed #f0f0f0; }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-label { color: #4a5568; }
+        .metric-value { font-weight: 600; color: #2d3748; }
 
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #1a202c;
-        }
-
-        .scenario-tabs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            background: #e2e8f0;
-            border: none;
-            border-radius: 6px 6px 0 0;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .tab:hover {
-            background: #cbd5e0;
-        }
-
-        .tab.active {
-            background: white;
-            border-bottom: 3px solid #4299e1;
-            font-weight: 600;
-        }
-
-        .tab-close {
-            color: #718096;
-            font-size: 18px;
-            line-height: 1;
-            margin-left: 5px;
-        }
-
-        .tab-close:hover {
-            color: #e53e3e;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            background: #4299e1;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: #3182ce;
-        }
-
-        .btn-secondary {
-            background: #48bb78;
-        }
-
-        .btn-secondary:hover {
-            background: #38a169;
-        }
-
-        .btn:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-        }
-
-        .container {
-            max-width: 1920px;
-            margin: 0 auto;
-            padding: 20px 40px;
-        }
-
-        .main-layout {
-            display: grid;
-            grid-template-columns: 40% 60%;
-            gap: 30px;
-            align-items: start;
-        }
-
-        .form-section, .results-section {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .form-block {
-            margin-bottom: 30px;
-        }
-
-        .form-block h3 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: #2d3748;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #4a5568;
-        }
-
-        .form-group input, .form-group select {
-            width: 300px;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #4299e1;
-        }
-
-        .form-group input.error {
-            border-color: #fc8181;
-        }
-
-        .form-group input.warning {
-            border-color: #f6ad55;
-        }
-
-        .error-message, .warning-message {
-            font-size: 12px;
-            margin-top: 3px;
-        }
-
-        .error-message {
-            color: #e53e3e;
-        }
-
-        .warning-message {
-            color: #dd6b20;
-        }
-
-        .reference {
-            font-size: 12px;
-            color: #718096;
-            margin-top: 3px;
-        }
-
-        .calculate-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-
-        .metric-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .metric-card h3 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: #2d3748;
-        }
-
-        .metric-group {
-            margin-bottom: 30px;
-        }
-
-        .metric-group h2 {
-            font-size: 18px;
-            color: #1a202c;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #edf2f7;
-            border-radius: 4px;
-        }
-
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .metric-row:last-child {
-            border-bottom: none;
-        }
-
-        .metric-label {
-            color: #4a5568;
-            font-size: 14px;
-        }
-
-        .metric-value {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-left: 8px;
-        }
-
-        .status-low { background: #4299e1; }
-        .status-optimal { background: #48bb78; }
-        .status-high { background: #ecc94b; }
+        /* Status Indicators */
+        .status-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+        .status-low { background: #4299e1; } 
+        .status-optimal { background: #48bb78; } 
+        .status-high { background: #ecc94b; } 
         .status-critical { background: #f56565; }
 
-        .comparison-view {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-        }
+        /* Lists & Tables */
+        .detail-list { list-style: none; margin-top: 10px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 13px; }
+        .detail-list li { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .sub-list { margin-left: 15px; padding-left: 10px; border-left: 2px solid #e2e8f0; margin-top: 5px; margin-bottom: 10px; }
+        .sub-list li { color: #718096; font-size: 12px; margin-bottom: 3px; }
+        
+        .resource-table { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 10px; }
+        .resource-table th { text-align: left; background: #f7fafc; padding: 8px; font-weight: 600; border-bottom: 2px solid #edf2f7; }
+        .resource-table td { padding: 8px; border-bottom: 1px solid #edf2f7; }
+        .deficit { color: #e53e3e; font-weight: 700; }
+        .surplus { color: #38a169; }
 
-        .comparison-controls {
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .formula-hint { font-size: 11px; color: #718096; margin-top: 4px; font-family: monospace; background: #fefefe; padding: 4px; border: 1px solid #eee; border-radius: 4px; word-break: break-all; }
+        .formula-block { margin-bottom: 10px; }
 
-        .comparison-controls select {
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .comparison-table th {
-            background: #f7fafc;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        .comparison-table tr:hover {
-            background: #f7fafc;
-        }
-
-        .group-header {
-            background: #edf2f7 !important;
-            font-weight: 700;
-            color: #2d3748;
-        }
-
-        .delta-positive {
-            color: #38a169;
-            background: #c6f6d5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .delta-negative {
-            color: #e53e3e;
-            background: #fed7d7;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .delta-neutral {
-            color: #718096;
-            background: #e2e8f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .detail-list {
-            font-size: 13px;
-            color: #718096;
-            margin-top: 8px;
-            padding-left: 20px;
-        }
-
-        .detail-list li {
-            margin-bottom: 4px;
-        }
-
-        .resource-table {
-            width: 100%;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .resource-table th,
-        .resource-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .resource-table th {
-            background: #f7fafc;
-            font-weight: 600;
-        }
-
-        .deficit {
-            color: #e53e3e;
-            font-weight: 600;
-        }
-
-        .surplus {
-            color: #38a169;
-        }
-
-        .two-col {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .two-col .col {
-            width: 50%;
-        }
-
-        @media (max-width: 1366px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-        }
+        .scenario-tabs { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+        .tab { padding: 8px 16px; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 14px; user-select: none; }
+        .tab:hover { background: #cbd5e0; }
+        .tab.active { background: white; border: 1px solid #cbd5e0; border-bottom: 3px solid #4299e1; font-weight: 600; }
+        .tab.compare-tab { background: #feebc8; }
+        .tab.compare-tab.active { border-bottom: 3px solid #ecc94b; background: #fff; }
+        
+        .hidden { display: none; }
+        
+        /* Comparison Table */
+        .comparison-view { background: white; padding: 30px; border-radius: 8px; }
+        .comparison-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 20px; }
+        .comparison-table th, .comparison-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
+        .comparison-table th { background: #f7fafc; font-weight: 600; }
+        .group-header { background: #edf2f7 !important; font-weight: 700; text-align: center; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Симулятор Socials - What-If</h1>
+        <h1>Симулятор Socials - Final (Bed Days)</h1>
         <div class="scenario-tabs" id="scenarioTabs"></div>
     </div>
 
@@ -399,1094 +90,560 @@
         <div id="mainView" class="main-layout">
             <div class="form-section">
                 <form id="clinicForm" onsubmit="return false;">
+                    
                     <div class="form-block">
-                        <h3>Визиты и Пациентопоток</h3>
-                        <div class="form-group">
-                            <label>Количество визитов в год</label>
-                            <input type="number" name="total_visits_per_year" value="1750000">
-                            <div class="error-message"></div>
+                        <h3>1. Визиты (Спрос)</h3>
+                        <div class="form-group"><label>Визитов в год (Total)</label><input type="number" name="total_visits_per_year" value="800000"></div>
+                        <div class="form-group"><label>Коэф. посещаемости</label><input type="number" name="visit_coefficient" value="3.5" step="0.1"></div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3>2. Ресурсы (Врачи)</h3>
+                        <div class="form-group"><label>Количество врачей</label><input type="number" name="doctors" value="380"></div>
+                        <div class="form-group"><label>Эффективное время работы, %</label><input type="number" name="doctor_efficiency" value="85"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Операционные</label><input type="number" name="operating_rooms" value="20"></div>
+                            <div class="form-group"><label>Койки</label><input type="number" name="beds" value="500"></div>
                         </div>
-                         <div class="form-group">
-                            <label>Коэффициент посещаемости</label>
-                            <input type="number" name="visit_coefficient" value="3.5" step="0.1">
-                            <div class="reference">Среднее число визитов на 1 уникального пациента</div>
-                            <div class="error-message"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Медсестры</label><input type="number" name="nurses" value="400"></div>
+                            <div class="form-group"><label>Администраторы</label><input type="number" name="admins" value="80"></div>
+                        </div>
+                        <div class="form-group"><label>Сервисный персонал</label><input type="number" name="service_staff" value="180"></div>
+                    </div>
+
+                    <div class="form-block">
+                        <h3>3. График и Время</h3>
+                        <div class="two-col">
+                            <div class="form-group"><label>Дней/нед</label><select name="days_per_week"><option value="5">5</option><option value="6" selected>6</option><option value="7">7</option></select></div>
+                            <div class="form-group"><label>Часов/смену</label><input type="number" name="hours_per_day" value="8"></div>
+                        </div>
+                        <div class="form-group"><label>Недель в году</label><input type="number" name="weeks_per_year" value="50"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Время приема (мин)</label><input type="number" name="consultation_time" value="30"></div>
+                            <div class="form-group"><label>Пересменка (мин)</label><input type="number" name="visit_prep_time" value="5"></div>
+                        </div>
+                         <div class="two-col">
+                            <div class="form-group"><label>Время операции (мин)</label><input type="number" name="operation_time" value="90"></div>
+                            <div class="form-group"><label>Подготовка Опер (мин)</label><input type="number" name="or_prep_time" value="30"></div>
                         </div>
                     </div>
 
                     <div class="form-block">
-                        <h3>Ресурсы</h3>
-                        <div class="form-group">
-                            <label>Количество врачей</label>
-                            <input type="number" name="doctors" value="380">
-                            <div class="error-message"></div>
+                        <h3>4. Финансы (Цены и Конверсии)</h3>
+                        <div class="two-col">
+                            <div class="form-group"><label>Чек Приема ($)</label><input type="number" name="consultation_price" value="33"></div>
+                            <div class="form-group"><label>Чек Повторного ($)</label><input type="number" name="followup_price" value="33"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Количество кабинетов</label>
-                            <input type="number" name="rooms" value="180">
-                            <div class="error-message"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Чек Операции ($)</label><input type="number" name="operation_price" value="1200"></div>
+                            <div class="form-group"><label>Конверсия в опер (%)</label><input type="number" name="conversion_rate" value="5"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Количество операционных</label>
-                            <input type="number" name="operating_rooms" value="20">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Количество коек</label>
-                            <input type="number" name="beds" value="500">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Количество медсестёр</label>
-                            <input type="number" name="nurses" value="400">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Количество администраторов</label>
-                            <input type="number" name="admins" value="80">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Количество сервисного персонала</label>
-                            <input type="number" name="service_staff" value="180">
-                            <div class="error-message"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Чек Диагностики ($)</label><input type="number" name="diagnostics_price" value="40"></div>
+                            <div class="form-group"><label>Доля Диагностики (%)</label><input type="number" name="diagnostics_rate" value="50"></div>
                         </div>
                     </div>
 
                     <div class="form-block">
-                        <h3>График работы</h3>
-                        <div class="form-group">
-                            <label>Рабочих дней в неделю</label>
-                            <select name="days_per_week">
-                                <option value="5" selected>5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                            </select>
+                        <h3>5. Расходы (Зарплаты и Мат.)</h3>
+                        <div class="two-col">
+                            <div class="form-group"><label>ЗП Врача (год)</label><input type="number" name="doctor_salary" value="24000"></div>
+                            <div class="form-group"><label>ЗП Медсестры</label><input type="number" name="nurse_salary" value="6000"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Часов работы в день</label>
-                            <input type="number" name="hours_per_day" value="8">
-                            <div class="error-message"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>ЗП Админа</label><input type="number" name="admin_salary" value="6000"></div>
+                            <div class="form-group"><label>ЗП Сервис</label><input type="number" name="service_salary" value="4000"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Рабочих недель в году</label>
-                            <input type="number" name="weeks_per_year" value="50">
-                            <div class="error-message"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-block">
-                        <h3>Временные параметры</h3>
-                        <div class="form-group">
-                            <label>Время консультации, мин</label>
-                            <input type="number" name="consultation_time" value="30">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Время операции, мин</label>
-                            <input type="number" name="operation_time" value="90">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Время подготовки кабинета, мин</label>
-                            <input type="number" name="room_prep_time" value="5">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Время подготовки операционной, мин</label>
-                            <input type="number" name="or_prep_time" value="30">
-                            <div class="error-message"></div>
-                        </div>
-                    </div>
-
-                   <div class="form-block two-col">
+                        <div class="form-group"><label>Налоги ФОТ (%)</label><input type="number" name="payroll_tax" value="20"></div>
                         
-                        <div class="col">
-                            <h3>Финансы - Выручка</h3>
-
-                            <div class="form-group">
-                                <label>Средний чек консультации, $</label>
-                                <input type="number" name="consultation_price" value="0">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Средний чек операции, $</label>
-                                <input type="number" name="operation_price" value="500">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Конверсия в операцию, %</label>
-                                <div class="reference">От числа уникальных пациентов</div>
-                                <input type="number" name="conversion_rate" value="5">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Средний чек диагностики, $</label>
-                                <input type="number" name="diagnostics_price" value="25">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Доля пациентов с диагностикой, %</label>
-                                <input type="number" name="diagnostics_rate" value="40">
-                                <div class="error-message"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Средний чек повторного приёма, $</label>
-                                <input type="number" name="followup_price" value="0">
-                                <div class="error-message"></div>
-                            </div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Мат. Прием</label><input type="number" name="consultation_materials" value="5"></div>
+                            <div class="form-group"><label>Мат. Операция</label><input type="number" name="operation_materials" value="250"></div>
                         </div>
-
-                        <div class="col">
-                            <h3>Medline</h3>
-
-                            <div class="form-group">
-                                <label>Средний чек консультации, $</label>
-                                <input type="number" value="33" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Средний чек операции, $</label>
-                                <input type="number" value="1200" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Конверсия в операцию, %</label>
-                                <input type="number" value="5" readonly>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Средний чек диагностики, $</label>
-                                <input type="number" value="40" readonly>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Коэффициент посещаемости</label>
-                                <input type="number" value="3.5" readonly>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-block">
-                        <h3>Финансы - Расходы на персонал (годовые)</h3>
-                        <div class="form-group">
-                            <label>Зарплата врача, $</label>
-                            <input type="number" name="doctor_salary" value="24000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Зарплата медсестры, $</label>
-                            <input type="number" name="nurse_salary" value="6000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Зарплата администратора, $</label>
-                            <input type="number" name="admin_salary" value="6000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Зарплата сервисного персонала, $</label>
-                            <input type="number" name="service_salary" value="4000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Налоги от ФОТ, %</label>
-                            <input type="number" name="payroll_tax" value="20">
-                            <div class="error-message"></div>
-                        </div>
+                        <div class="form-group"><label>Мат. Диагностика</label><input type="number" name="diagnostics_materials" value="15"></div>
                     </div>
 
                     <div class="form-block">
-                        <h3>Финансы - Расходы на материалы</h3>
-                        <div class="form-group">
-                            <label>Материалы на консультацию, $</label>
-                            <input type="number" name="consultation_materials" value="0">
-                            <div class="error-message"></div>
+                        <h3>6. Постоянные расходы</h3>
+                        <div class="two-col">
+                            <div class="form-group"><label>Аренда</label><input type="number" name="rent" value="0"></div>
+                            <div class="form-group"><label>Коммуналка</label><input type="number" name="utilities" value="30000"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Материалы на операцию, $</label>
-                            <input type="number" name="operation_materials" value="250">
-                            <div class="error-message"></div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Амортизация</label><input type="number" name="depreciation" value="400000"></div>
+                            <div class="form-group"><label>IT / ПО</label><input type="number" name="it_systems" value="30000"></div>
                         </div>
-                        <div class="form-group">
-                            <label>Материалы на диагностику, $</label>
-                            <input type="number" name="diagnostics_materials" value="15">
-                            <div class="error-message"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-block">
-                        <h3>Финансы - Постоянные расходы (годовые)</h3>
-                        <div class="form-group">
-                            <label>Аренда, $</label>
-                            <input type="number" name="rent" value="0">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Коммуналка, $</label>
-                            <input type="number" name="utilities" value="30000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Амортизация оборудования, $</label>
-                            <input type="number" name="depreciation" value="400000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>IT системы, $</label>
-                            <input type="number" name="it_systems" value="30000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Маркетинг, $</label>
-                            <input type="number" name="marketing" value="0">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Страхование, $</label>
-                            <input type="number" name="insurance" value="0">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Прочие, $</label>
-                            <input type="number" name="other_expenses" value="10000">
-                            <div class="error-message"></div>
-                        </div>
-                        <div class="form-group">
-                            <label>Налог на прибыль, %</label>
-                            <input type="number" name="profit_tax" value="20">
-                            <div class="error-message"></div>
+                         <div class="two-col">
+                             <div class="form-group"><label>Маркетинг</label><input type="number" name="marketing" value="0"></div>
+                             <div class="form-group"><label>Страхование</label><input type="number" name="insurance" value="0"></div>
+                         </div>
+                        <div class="two-col">
+                            <div class="form-group"><label>Прочие</label><input type="number" name="other_expenses" value="10000"></div>
+                            <div class="form-group"><label>Налог на Прибыль (%)</label><input type="number" name="profit_tax" value="20"></div>
                         </div>
                     </div>
 
-                    <button type="button" class="btn calculate-btn" onclick="handleCalculate()">Рассчитать</button>
+                    <button type="button" class="btn" onclick="handleCalculate()">Рассчитать</button>
                 </form>
             </div>
 
             <div class="results-section">
-                <div id="results"><p style="color: #718096;">Нажмите "Рассчитать" для получения результатов</p></div>
+                <div id="results"><p style="color: #718096; text-align: center; margin-top: 50px;">Нажмите "Рассчитать"</p></div>
             </div>
         </div>
 
-        <div id="comparisonView" class="comparison-view hidden"></div>
+        <div id="comparisonView" class="comparison-view hidden">
+            <h2>Сравнение сценариев</h2>
+            <p style="font-size: 13px; color: #718096;">Данные пересчитаны автоматически на основе сохраненных параметров.</p>
+            <div id="comparisonContent"></div>
+        </div>
     </div>
 
     <script>
-        // Глобальное состояние приложения
-        const AppState = {
-            scenarios: [],
-            activeScenarioId: null,
-            comparisonMode: false
-        };
+        // --- DATA & STATE ---
+        const AppState = { scenarios: [], activeScenarioId: null };
 
-        // Генерация UUID
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
+        // --- CORE LOGIC ---
+        function calculateMetrics(data) {
+            const results = {};
 
-        // Сохранение в localStorage
-        function saveToLocalStorage() {
-            try {
-                localStorage.setItem('clinicSimulatorVisits', JSON.stringify({
-                    scenarios: AppState.scenarios,
-                    activeScenarioId: AppState.activeScenarioId
-                }));
-            } catch(e) {
-                console.error('Error saving to localStorage:', e);
-            }
-        }
+            // 1. Time Calculations
+            const working_days = data.days_per_week * data.weeks_per_year;
+            
+            // Capacity based on Doctor Effective Hours
+            const doc_eff_hours_day = data.hours_per_day * (data.doctor_efficiency / 100);
+            const doc_eff_hours_year = working_days * doc_eff_hours_day;
+            const standard_hours_year = working_days * data.hours_per_day;
 
-        // Загрузка из localStorage
-        function loadFromLocalStorage() {
-            try {
-                const data = localStorage.getItem('clinicSimulatorVisits');
-                if (data) {
-                    const parsed = JSON.parse(data);
-                    AppState.scenarios = parsed.scenarios || [];
-                    AppState.activeScenarioId = parsed.activeScenarioId;
-                    
-                    // Если нет сценариев или их не 2, создать заново
-                    if (AppState.scenarios.length !== 2) {
-                        createDefaultScenarios();
-                    }
-                } else {
-                    createDefaultScenarios();
-                }
-            } catch(e) {
-                console.error('Error loading from localStorage:', e);
-                createDefaultScenarios();
-            }
-        }
+            // 2. Demand Flow (Pool Logic)
+            const total_visits_demand = data.total_visits_per_year;
+            const unique_patients = data.visit_coefficient > 0 ? Math.floor(total_visits_demand / data.visit_coefficient) : 0;
 
-        // Создание 2 фиксированных сценариев
-        function createDefaultScenarios() {
-            const defaultParams = getFormData();
-            AppState.scenarios = [
-                {
-                    id: 'scenario-1',
-                    name: 'Сценарий 1',
-                    parameters: {...defaultParams},
-                    results: null
+            const primary_demand = unique_patients;
+            const ops_demand = Math.floor(unique_patients * (data.conversion_rate / 100));
+
+            // Pool = Total - Primary - Ops
+            let pool = total_visits_demand - primary_demand - ops_demand;
+            if(pool < 0) pool = 0;
+
+            const diag_demand = Math.floor(pool * (data.diagnostics_rate / 100));
+            const followup_demand = pool - diag_demand;
+
+            // 3. Capacity & Actuals
+            // Doctor Capacity (Visits) = (Docs * EffHours) / (TimePerVisit + Prep)
+            const visit_time_hr = (data.consultation_time + data.visit_prep_time) / 60;
+            const doc_capacity = Math.floor(data.doctors * doc_eff_hours_year / visit_time_hr);
+            
+            // Doctors serve Primary + Followup (Consultation Load)
+            const doc_load_demand = primary_demand + followup_demand;
+            const doc_load_actual = Math.min(doc_capacity, doc_load_demand);
+            const fulfillment_ratio = doc_load_demand > 0 ? doc_load_actual / doc_load_demand : 0;
+
+            const primary_actual = Math.floor(primary_demand * fulfillment_ratio);
+            const followup_actual = Math.floor(followup_demand * fulfillment_ratio);
+            
+            // Diag depends on pool but limited by overall fulfillment (simplification)
+            const diag_actual = Math.floor(diag_demand * fulfillment_ratio);
+
+            // Ops Capacity
+            const op_time_hr = (data.operation_time + data.or_prep_time) / 60;
+            const op_capacity = data.operating_rooms > 0 ? Math.floor(data.operating_rooms * standard_hours_year / op_time_hr) : 0;
+            const ops_actual = Math.min(op_capacity, ops_demand);
+
+            // Beds Capacity (Bed Days)
+            const bed_days_available = data.beds * 365;
+            const bed_capacity_days = bed_days_available; // NO DIVISION BY 3
+
+            // Total Actual
+            const total_visits_actual = primary_actual + followup_actual + diag_actual + ops_actual;
+            const consultations_only_actual = primary_actual + followup_actual;
+
+            // 4. Utilization Stats
+            const doc_hours_used = consultations_only_actual * visit_time_hr;
+            const doc_hours_avail = data.doctors * doc_eff_hours_year;
+            const doc_util = doc_hours_avail > 0 ? (doc_hours_used / doc_hours_avail * 100) : 0;
+
+            const op_hours_used = ops_actual * op_time_hr;
+            const op_hours_avail = data.operating_rooms * standard_hours_year;
+            const op_util = op_hours_avail > 0 ? (op_hours_used / op_hours_avail * 100) : 0;
+
+            const beds_needed_days = ops_demand * 3; // Demand still consumes 3 days
+            const beds_util = bed_days_available > 0 ? (beds_needed_days / bed_days_available * 100) : 0;
+
+            // 5. Financials
+            const rev_cons = primary_actual * data.consultation_price;
+            const rev_foll = followup_actual * data.followup_price;
+            const rev_diag = diag_actual * data.diagnostics_price;
+            const rev_ops = ops_actual * data.operation_price;
+            const revenue_total = rev_cons + rev_foll + rev_diag + rev_ops;
+
+            // Expenses Breakdown
+            const pay_docs = data.doctors * data.doctor_salary;
+            const pay_nurse = data.nurses * data.nurse_salary;
+            const pay_admin = data.admins * data.admin_salary;
+            const pay_service = data.service_staff * data.service_salary;
+            const pay_base = pay_docs + pay_nurse + pay_admin + pay_service;
+            const pay_tax = pay_base * (data.payroll_tax / 100);
+            const payroll_total = pay_base + pay_tax;
+
+            const mat_cons = consultations_only_actual * data.consultation_materials;
+            const mat_ops = ops_actual * data.operation_materials;
+            const mat_diag = diag_actual * data.diagnostics_materials;
+            const mat_total = mat_cons + mat_ops + mat_diag;
+
+            const fix_rent = data.rent;
+            const fix_util = data.utilities;
+            const fix_depr = data.depreciation;
+            const fix_it = data.it_systems;
+            const fix_mark = data.marketing;
+            const fix_ins = data.insurance;
+            const fix_other = data.other_expenses;
+            const fixed_total = fix_rent + fix_util + fix_depr + fix_it + fix_mark + fix_ins + fix_other;
+
+            const expenses_total = payroll_total + mat_total + fixed_total;
+
+            const expenses_excl_depr = expenses_total - data.depreciation;
+            const ebitda = revenue_total - expenses_excl_depr;
+            
+            const ebit = ebitda - data.depreciation;
+            const tax = ebit > 0 ? ebit * (data.profit_tax / 100) : 0;
+            const net_profit = ebit - tax;
+
+            // 6. ROI & Needs
+            const roi_doc = data.doctors > 0 ? net_profit / data.doctors : 0;
+            const roi_or = data.operating_rooms > 0 ? net_profit / data.operating_rooms : 0;
+
+            // Needs calculated based on CONSULTATION load for doctors
+            const doc_need = doc_capacity > 0 ? Math.ceil(data.doctors * (doc_load_demand / doc_capacity)) : 0;
+            const or_need = op_capacity > 0 ? Math.ceil(data.operating_rooms * (ops_demand / op_capacity)) : 0;
+
+            const var_cost_per_pat = unique_patients > 0 ? mat_total / unique_patients : 0; 
+            const avg_rev_per_pat = unique_patients > 0 ? revenue_total / unique_patients : 0;
+            const margin_per_pat = avg_rev_per_pat - var_cost_per_pat;
+            const fixed_cash = payroll_total + fixed_total; 
+            
+            const be_patients = margin_per_pat > 0 ? fixed_cash / margin_per_pat : 0;
+            const be_revenue = be_patients * avg_rev_per_pat;
+
+            results.metrics = {
+                visits: { 
+                    total: total_visits_actual, 
+                    consultations_only: consultations_only_actual,
+                    month: total_visits_actual/12, 
+                    day: working_days>0 ? total_visits_actual/working_days : 0 
                 },
-                {
-                    id: 'scenario-2',
-                    name: 'Сценарий 2',
-                    parameters: {...defaultParams},
-                    results: null
+                capacity: { docs: doc_capacity, ops: op_capacity, beds: bed_capacity_days },
+                utilization: { docs: doc_util, ops: op_util, beds: beds_util },
+                financials: {
+                    revenue: revenue_total,
+                    expenses: expenses_total,
+                    ebitda: ebitda,
+                    net_profit: net_profit,
+                    rev_details: { cons: rev_cons, foll: rev_foll, diag: rev_diag, ops: rev_ops },
+                    exp_details: { 
+                        payroll: { total: payroll_total, docs: pay_docs, nurses: pay_nurse, admins: pay_admin, service: pay_service, tax: pay_tax },
+                        materials: { total: mat_total, cons: mat_cons, ops: mat_ops, diag: mat_diag },
+                        fixed: { total: fixed_total, rent: fix_rent, util: fix_util, depr: fix_depr, it: fix_it, mark: fix_mark, ins: fix_ins, other: fix_other }
+                    }
+                },
+                structure: { primary: primary_actual, followup: followup_actual, diag: diag_actual, ops: ops_actual, unique: primary_actual },
+                averages: { rev_pat: avg_rev_per_pat, cost_pat: unique_patients>0?expenses_total/unique_patients:0 },
+                breakeven: { patients: be_patients, revenue: be_revenue, safety: unique_patients>0 ? (unique_patients-be_patients)/unique_patients*100 : 0 },
+                roi: { doc: roi_doc, or: roi_or },
+                needs: { 
+                    doc: { have: data.doctors, need: doc_need, diff: doc_need - data.doctors },
+                    or: { have: data.operating_rooms, need: or_need, diff: or_need - data.operating_rooms }
                 }
-            ];
-            AppState.activeScenarioId = 'scenario-1';
-            saveToLocalStorage();
+            };
+            return results;
         }
 
-        // Получение данных формы
-        function getFormData() {
-            const form = document.getElementById('clinicForm');
-            const formData = new FormData(form);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                data[key] = parseFloat(value) || 0;
+        // --- RENDERERS ---
+        function formatNum(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+        function formatMoney(n) { return '$' + formatNum(n); }
+        function formatPct(n) { return n.toFixed(1) + '%'; }
+        
+        function getStatus(val) {
+            if(val < 70) return {c:'status-low', t:'Недозагрузка'};
+            if(val < 85) return {c:'status-optimal', t:'Оптимально'};
+            if(val < 95) return {c:'status-high', t:'Высокая'};
+            return {c:'status-critical', t:'Перегрузка'};
+        }
+
+        function renderResults(res, inputs) {
+            const m = res.metrics;
+            const div = document.getElementById('results');
+            let h = '';
+
+            // CALCULUS STRINGS
+            const doc_calc_str = `(${inputs.doctors} вр. * ${inputs.doctor_efficiency}% * ${inputs.days_per_week} дн * ${inputs.weeks_per_year} нед * ${inputs.hours_per_day} ч) / ((${inputs.consultation_time}+${inputs.visit_prep_time})мин / 60)`;
+            const op_calc_str = `(${inputs.operating_rooms} опер * ${inputs.days_per_week} дн * ${inputs.weeks_per_year} нед * ${inputs.hours_per_day} ч) / ((${inputs.operation_time}+${inputs.or_prep_time})мин / 60)`;
+            const bed_calc_str = `(${inputs.beds} коек * 365 дней)`;
+
+            // 1. PATIENT FLOW (MOVED TO TOP)
+            h += '<div class="metric-group"><h2>ПАЦИЕНТОПОТОК</h2>';
+             h += `<div class="metric-card"><h3>Структура</h3>
+                    <div class="metric-row"><span class="metric-label">Консультация (1)</span><span class="metric-value">${formatNum(m.structure.primary)}</span></div>
+                    <div class="metric-row"><span class="metric-label">Консультация (2)</span><span class="metric-value">${formatNum(m.structure.followup)}</span></div>
+                    <div class="metric-row"><span class="metric-label">Диагностика</span><span class="metric-value">${formatNum(m.structure.diag)}</span></div>
+                    <div class="metric-row"><span class="metric-label">Операции</span><span class="metric-value">${formatNum(m.structure.ops)}</span></div>
+                    <div class="metric-row" style="margin-top: 10px; border-top: 2px solid #cbd5e0; padding-top: 8px;"><span class="metric-label" style="color:#1a202c;"><strong>ВСЕГО</strong></span><span class="metric-value">${formatNum(m.visits.total)}</span></div>
+                  </div>`;
+             h += `<div class="metric-card"><h3>Средние показатели</h3>
+                    <div class="metric-row"><span class="metric-label">Выручка на пациента</span><span class="metric-value">${formatMoney(m.averages.rev_pat)}</span></div>
+                    <div class="metric-row"><span class="metric-label">Расход на пациента</span><span class="metric-value">${formatMoney(m.averages.cost_pat)}</span></div>
+                  </div>`;
+            h += '</div>';
+
+            // 2. OPERATIONAL
+            h += '<div class="metric-group"><h2>ОПЕРАЦИОННЫЕ МЕТРИКИ</h2>';
+            
+            h += `<div class="metric-card"><h3>Пропускная способность операций</h3>
+                    <div class="formula-block">
+                        <div class="metric-row"><span class="metric-label">Пропускная способность операций</span><span class="metric-value">${formatNum(m.capacity.ops)}</span></div>
+                        <div class="formula-hint">${op_calc_str}</div>
+                    </div>
+                    <div class="formula-block">
+                        <div class="metric-row"><span class="metric-label">Пропускная способность (койко-дней)</span><span class="metric-value">${formatNum(m.capacity.beds)}</span></div>
+                        <div class="formula-hint">${bed_calc_str}</div>
+                    </div>
+                    <div class="metric-row" style="margin-top:5px; border-top:1px dashed #eee; padding-top:5px;"><span class="metric-label">Факт операций</span><span class="metric-value">${formatNum(m.structure.ops)}</span></div>
+                  </div>`;
+
+            h += `<div class="metric-card"><h3>Пропускная способность консультаций</h3>
+                    <div class="formula-block">
+                        <div class="metric-row"><span class="metric-label">Мощность Врачей (визитов)</span><span class="metric-value">${formatNum(m.capacity.docs)}</span></div>
+                        <div class="formula-hint">${doc_calc_str}</div>
+                    </div>
+                    <div class="metric-row" style="margin-top:5px; border-top:1px dashed #eee; padding-top:5px;"><span class="metric-label">Факт Консультаций (1+2)</span><span class="metric-value">${formatNum(m.visits.consultations_only)}</span></div>
+                  </div>`;
+            
+            const uDoc = getStatus(m.utilization.docs);
+            const uOr = getStatus(m.utilization.ops);
+            const uBed = getStatus(m.utilization.beds);
+            
+            h += `<div class="metric-card"><h3>Загрузка Ресурсов</h3>
+                    <div class="metric-row"><span class="metric-label">Врачи</span><span class="metric-value"><span class="status-indicator ${uDoc.c}"></span>${formatPct(m.utilization.docs)} (${uDoc.t})</span></div>
+                    <div class="metric-row"><span class="metric-label">Операционные</span><span class="metric-value"><span class="status-indicator ${uOr.c}"></span>${formatPct(m.utilization.ops)} (${uOr.t})</span></div>
+                    <div class="metric-row"><span class="metric-label">Койки</span><span class="metric-value"><span class="status-indicator ${uBed.c}"></span>${formatPct(m.utilization.beds)} (${uBed.t})</span></div>
+                  </div>`;
+            h += '</div>';
+
+            // 3. FINANCIALS
+            const ex = m.financials.exp_details;
+            h += '<div class="metric-group"><h2>ФИНАНСОВЫЕ МЕТРИКИ</h2>';
+            
+            h += `<div class="metric-card"><h3>Выручка</h3>
+                    <div class="metric-row" style="border-bottom:2px solid #edf2f7; margin-bottom:5px;"><span class="metric-label"><strong>ИТОГО</strong></span><span class="metric-value">${formatMoney(m.financials.revenue)}</span></div>
+                    <ul class="detail-list">
+                        <li><span>Консультации</span><span>${formatMoney(m.financials.rev_details.cons + m.financials.rev_details.foll)}</span></li>
+                        <li><span>Диагностика</span><span>${formatMoney(m.financials.rev_details.diag)}</span></li>
+                        <li><span>Операции</span><span>${formatMoney(m.financials.rev_details.ops)}</span></li>
+                    </ul>
+                  </div>`;
+            
+            h += `<div class="metric-card"><h3>Расходы</h3>
+                    <div class="metric-row" style="border-bottom:2px solid #edf2f7; margin-bottom:5px;"><span class="metric-label"><strong>ИТОГО</strong></span><span class="metric-value">${formatMoney(m.financials.expenses)}</span></div>
+                     
+                     <ul class="detail-list">
+                        <li><strong>ФОТ Персонала</strong><span>${formatMoney(ex.payroll.total)}</span></li>
+                        <ul class="sub-list">
+                            <li>Врачи: ${formatMoney(ex.payroll.docs)}</li>
+                            <li>Медсестры: ${formatMoney(ex.payroll.nurses)}</li>
+                            <li>Админы: ${formatMoney(ex.payroll.admins)}</li>
+                            <li>Сервис: ${formatMoney(ex.payroll.service)}</li>
+                            <li>Налоги ФОТ: ${formatMoney(ex.payroll.tax)}</li>
+                        </ul>
+
+                        <li><strong>Материалы</strong><span>${formatMoney(ex.materials.total)}</span></li>
+                         <ul class="sub-list">
+                            <li>На приемы: ${formatMoney(ex.materials.cons)}</li>
+                            <li>На операции: ${formatMoney(ex.materials.ops)}</li>
+                            <li>На диагностику: ${formatMoney(ex.materials.diag)}</li>
+                        </ul>
+
+                        <li><strong>Постоянные</strong><span>${formatMoney(ex.fixed.total)}</span></li>
+                        <ul class="sub-list">
+                            <li>Аренда: ${formatMoney(ex.fixed.rent)}</li>
+                            <li>Коммуналка: ${formatMoney(ex.fixed.util)}</li>
+                            <li>Амортизация: ${formatMoney(ex.fixed.depr)}</li>
+                            <li>IT/ПО: ${formatMoney(ex.fixed.it)}</li>
+                            <li>Маркетинг: ${formatMoney(ex.fixed.mark)}</li>
+                            <li>Страхование: ${formatMoney(ex.fixed.ins)}</li>
+                            <li>Прочее: ${formatMoney(ex.fixed.other)}</li>
+                        </ul>
+                    </ul>
+                  </div>`;
+            
+            const ebitda_calc = `${formatMoney(m.financials.revenue)} - (${formatMoney(ex.payroll.total)} + ${formatMoney(ex.materials.total)} + ${formatMoney(ex.fixed.total - ex.fixed.depr)})`;
+            
+            h += `<div class="metric-card"><h3>Прибыльность</h3>
+                    <div class="metric-row"><span class="metric-label">EBITDA</span><span class="metric-value">${formatMoney(m.financials.ebitda)}</span></div>
+                    <div class="formula-hint">Расчет: Выручка - (ФОТ + Материалы + Постоянные без Аморт.)</div>
+                    <div class="formula-hint">${ebitda_calc}</div>
+                    
+                    <div class="metric-row" style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+                        <span class="metric-label"><strong>Чистая Прибыль</strong></span>
+                        <span class="metric-value" style="color:${m.financials.net_profit>0?'#38a169':'#e53e3e'}">${formatMoney(m.financials.net_profit)}</span>
+                    </div>
+                  </div>`;
+            
+            h += `<div class="metric-card"><h3>ROI (в год)</h3>
+                    <div class="metric-row"><span class="metric-label">На 1 врача</span><span class="metric-value">${formatMoney(m.roi.doc)}</span></div>
+                    <div class="metric-row"><span class="metric-label">На 1 операционную</span><span class="metric-value">${formatMoney(m.roi.or)}</span></div>
+                  </div>`;
+            h += '</div>';
+
+            // 4. RESOURCES
+            h += '<div class="metric-group"><h2>РЕСУРСЫ</h2>';
+            h += `<div class="metric-card"><h3>Дефицит / Профицит</h3>
+                    <table class="resource-table">
+                        <thead><tr><th>Ресурс</th><th>Есть</th><th>Нужно</th><th>Дефицит</th></tr></thead>
+                        <tbody>
+                            <tr><td>Врачи</td><td>${m.needs.doc.have}</td><td>${m.needs.doc.need}</td><td class="${m.needs.doc.diff>0?'deficit':'surplus'}">${m.needs.doc.diff}</td></tr>
+                            <tr><td>Операционные</td><td>${m.needs.or.have}</td><td>${m.needs.or.need}</td><td class="${m.needs.or.diff>0?'deficit':'surplus'}">${m.needs.or.diff}</td></tr>
+                        </tbody>
+                    </table>
+                  </div>`;
+            h += '</div>';
+
+            div.innerHTML = h;
+        }
+
+        function renderComparison() {
+            const container = document.getElementById('comparisonContent');
+            let html = '<table class="comparison-table"><thead><tr><th>Метрика</th>';
+            
+            const scenarios = AppState.scenarios;
+            scenarios.forEach(s => html += `<th>${s.name}</th>`);
+            html += '</tr></thead><tbody>';
+
+            const addRow = (label, getter, formatter) => {
+                html += `<tr><td>${label}</td>`;
+                scenarios.forEach(s => html += `<td>${formatter(getter(s.results.metrics))}</td>`);
+                html += `</tr>`;
+            };
+
+            html += '<tr class="group-header"><td colspan="3">ОПЕРАЦИОННЫЕ</td></tr>';
+            addRow('Факт Консультаций (1+2)', m => m.visits.consultations_only, formatNum);
+            addRow('Мощность Врачей', m => m.capacity.docs, formatNum);
+            addRow('Мощность Оперблока (опер)', m => m.capacity.ops, formatNum);
+            addRow('Мощность Коек (койко-дни)', m => m.capacity.beds, formatNum);
+            addRow('Загрузка Врачей', m => m.utilization.docs, formatPct);
+            addRow('Загрузка Оперблока', m => m.utilization.ops, formatPct);
+
+            html += '<tr class="group-header"><td colspan="3">ФИНАНСЫ</td></tr>';
+            addRow('Выручка', m => m.financials.revenue, formatMoney);
+            addRow('Чистая Прибыль', m => m.financials.net_profit, formatMoney);
+            addRow('EBITDA', m => m.financials.ebitda, formatMoney);
+            addRow('ROI (Врач)', m => m.roi.doc, formatMoney);
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // --- APP CONTROLLER ---
+        function handleCalculate() {
+            const data = getFormData();
+            const results = calculateMetrics(data);
+            
+            const active = AppState.scenarios.find(s => s.id === AppState.activeScenarioId);
+            if(active) {
+                active.parameters = data;
+                active.results = results;
+                saveData();
+                renderResults(results, data);
             }
-            return data;
         }
 
-        // Установка данных в форму
-        function setFormData(parameters) {
-            const form = document.getElementById('clinicForm');
-            for (let [key, value] of Object.entries(parameters)) {
-                const input = form.elements[key];
-                if (input) {
-                    input.value = value;
-                }
-            }
-        }
-
-        // Получение активного сценария
-        function getActiveScenario() {
-            return AppState.scenarios.find(s => s.id === AppState.activeScenarioId);
-        }
-
-        // Рендер табов сценариев (2 фиксированных)
-        function renderScenarioTabs() {
-            const container = document.getElementById('scenarioTabs');
-            container.innerHTML = '';
-
-            AppState.scenarios.forEach(scenario => {
-                const tab = document.createElement('div');
-                tab.className = `tab ${scenario.id === AppState.activeScenarioId ? 'active' : ''}`;
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = scenario.name;
-                
-                tab.appendChild(nameSpan);
-                tab.onclick = () => switchScenario(scenario.id);
-                container.appendChild(tab);
-            });
-
-            // Кнопка сравнения
-            const compareBtn = document.createElement('button');
-            compareBtn.className = 'btn btn-secondary';
-            compareBtn.textContent = AppState.comparisonMode ? '← Вернуться к редактированию' : '⚖ Сравнить сценарии';
-            compareBtn.onclick = toggleComparisonMode;
-            container.appendChild(compareBtn);
-        }
-
-        // Переключить сценарий
-        function switchScenario(id) {
-            const current = getActiveScenario();
-            if (current) {
-                current.parameters = getFormData();
-                saveToLocalStorage();
+        function switchView(id) {
+            if (AppState.activeScenarioId && AppState.activeScenarioId !== 'compare') {
+                const currentData = getFormData();
+                const currentScen = AppState.scenarios.find(s => s.id === AppState.activeScenarioId);
+                if(currentScen) currentScen.parameters = currentData;
             }
 
             AppState.activeScenarioId = id;
-            const scenario = getActiveScenario();
-            setFormData(scenario.parameters);
-            
-            if (scenario.results) {
-                renderResults(scenario.results);
-            } else {
-                document.getElementById('results').innerHTML = '<p style="color: #718096;">Нажмите "Рассчитать" для получения результатов</p>';
-            }
-            
-            renderScenarioTabs();
-        }
+            saveData();
 
-        // Валидация формы
-        function validateForm() {
-            const data = getFormData();
-            let isValid = true;
-            let warnings = [];
-
-            // Очистить предыдущие ошибки
-            document.querySelectorAll('.error-message, .warning-message').forEach(el => el.textContent = '');
-            document.querySelectorAll('input').forEach(input => {
-                input.classList.remove('error', 'warning');
-            });
-
-            if (data.visit_coefficient < 1) {
-                showFieldError('visit_coefficient', 'Коэффициент не может быть меньше 1');
-                isValid = false;
-            }
-
-            if (data.total_visits_per_year <= 0) {
-                 showFieldError('total_visits_per_year', 'Должно быть больше 0');
-                 isValid = false;
-            }
-
-            return { isValid, warnings };
-        }
-
-        function showFieldError(fieldName, message) {
-            const input = document.querySelector(`[name="${fieldName}"]`);
-            if (input) {
-                input.classList.add('error');
-                const errorDiv = input.parentElement.querySelector('.error-message');
-                if (errorDiv) errorDiv.textContent = message;
-            }
-        }
-
-        function showFieldWarning(fieldName, message) {
-            const input = document.querySelector(`[name="${fieldName}"]`);
-            if (input) {
-                input.classList.add('warning');
-                const warningDiv = input.parentElement.querySelector('.warning-message, .error-message');
-                if (warningDiv) {
-                    warningDiv.textContent = message;
-                    warningDiv.className = 'warning-message';
-                }
-            }
-        }
-
-        // Главная функция расчёта
-        function handleCalculate() {
-            console.log('Calculate button clicked');
-            
-            const validation = validateForm();
-            console.log('Validation result:', validation);
-            
-            if (!validation.isValid) {
-                return;
-            }
-
-            if (validation.warnings.length > 0) {
-                const proceed = confirm('Обнаружены предупреждения:\n\n' + validation.warnings.join('\n') + '\n\nПродолжить расчёт?');
-                if (!proceed) return;
-            }
-
-            try {
-                const data = getFormData();
-                console.log('Form data:', data);
+            if (id === 'compare') {
+                document.getElementById('mainView').classList.add('hidden');
+                document.getElementById('comparisonView').classList.remove('hidden');
                 
-                const results = calculateMetrics(data);
-                console.log('Calculation results:', results);
-                
-                const scenario = getActiveScenario();
-                scenario.parameters = data;
-                scenario.results = results;
-                saveToLocalStorage();
-                
-                renderResults(results);
-                
-            } catch(e) {
-                console.error('Error during calculation:', e);
-            }
-        }
+                AppState.scenarios.forEach(s => {
+                    s.results = calculateMetrics(s.parameters);
+                });
+                renderComparison();
 
-function calculateMetrics(data) {
-    const results = {};
-
-    // --- 0. BASE CALCULATIONS (Time & Hours) ---
-    const working_days_per_year = data.days_per_week * data.weeks_per_year;
-    const working_hours_per_year = working_days_per_year * data.hours_per_day;
-
-    // --- 1. CONSULTATIONS LOGIC (INVERTED) ---
-    
-    // Input: Total Visits Demand & Coefficient
-    const total_visits_demand = data.total_visits_per_year;
-    const visit_coefficient = data.visit_coefficient;
-    
-    // Derived: Unique Patients Demand
-    // Logic: Coefficient = Total Visits / Unique Patients => Unique = Total / Coef
-    const unique_patients_demand = visit_coefficient > 0 ? Math.floor(total_visits_demand / visit_coefficient) : 0;
-
-    // A. Capacity
-    const consultation_time_with_prep = (data.consultation_time + data.room_prep_time) / 60;
-    const consultations_capacity_doctors = Math.floor(data.doctors * working_hours_per_year / consultation_time_with_prep);
-    const consultations_capacity_rooms = Math.floor(data.rooms * working_hours_per_year / consultation_time_with_prep);
-    const consultations_capacity = Math.min(consultations_capacity_doctors, consultations_capacity_rooms);
-
-    // C. Actuals (Based on Total Visits Demand vs Capacity)
-    const total_visits_actual = Math.min(consultations_capacity, total_visits_demand);
-
-    // D. Disaggregation (Actuals Split)
-    // We apply the same coefficient to the ACTUAL visits to derive actual unique patients
-    const consultations_actual = visit_coefficient > 0 ? Math.floor(total_visits_actual / visit_coefficient) : 0; // Primary/Unique
-    const followup_count = total_visits_actual - consultations_actual; // Secondary
-
-    const consultations_utilization = consultations_capacity > 0 ? (total_visits_actual / consultations_capacity * 100) : 0;
-    const consultations_unmet = Math.max(0, total_visits_demand - consultations_capacity);
-
-    results.consultations = {
-        capacity: consultations_capacity,
-        demand: total_visits_demand, // Displaying Visits Demand
-        actual: total_visits_actual,
-        primary_visits: consultations_actual,
-        followup_visits: followup_count,
-        utilization: consultations_utilization,
-        unmet: consultations_unmet
-    };
-
-    // --- 7. REVENUE (Moved here because it needs specific counts) ---
-    const diagnostics_count = Math.floor(consultations_actual * (data.diagnostics_rate / 100));
-    
-    // --- 2. OPERATIONS LOGIC ---
-    const operation_time_with_prep = (data.operation_time + data.or_prep_time) / 60;
-    const operations_capacity = data.operating_rooms > 0 ? Math.floor(data.operating_rooms * working_hours_per_year / operation_time_with_prep) : 0;
-    
-    // Demand depends on UNIQUE patients (consultations_actual)
-    const operations_demand = Math.floor(consultations_actual * (data.conversion_rate / 100));
-    const operations_actual = Math.min(operations_capacity, operations_demand);
-    const operations_utilization = operations_capacity > 0 ? (operations_actual / operations_capacity * 100) : 0;
-    const operations_unmet = Math.max(0, operations_demand - operations_capacity);
-
-    results.operations = {
-        capacity: operations_capacity,
-        demand: operations_demand,
-        actual: operations_actual,
-        utilization: operations_utilization,
-        unmet: operations_unmet
-    };
-
-    // --- BACK TO REVENUE CALCULATION ---
-    const revenue_consultations = consultations_actual * data.consultation_price;
-    const revenue_operations = operations_actual * data.operation_price;
-    const revenue_diagnostics = diagnostics_count * data.diagnostics_price;
-    const revenue_followup = followup_count * data.followup_price;
-    const revenue_total = revenue_consultations + revenue_operations + revenue_diagnostics + revenue_followup;
-
-    // --- 3. DOCTOR UTILIZATION ---
-    // Note: (followup_count + consultations_actual) equals total_visits_actual
-    const doctor_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
-    const doctor_hours_available = data.doctors * working_hours_per_year;
-    const doctor_utilization = doctor_hours_available > 0 ? (doctor_hours_needed / doctor_hours_available * 100) : 0;
-
-    results.doctor_utilization = {
-        value: doctor_utilization,
-        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(doctor_utilization) : 'N/A'
-    };
-
-    // --- 4. ROOM UTILIZATION ---
-    const room_hours_needed = (followup_count + consultations_actual) * consultation_time_with_prep;
-    const room_hours_available = data.rooms * working_hours_per_year;
-    const room_utilization = room_hours_available > 0 ? (room_hours_needed / room_hours_available * 100) : 0;
-
-    results.room_utilization = {
-        value: room_utilization,
-        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(room_utilization) : 'N/A'
-    };
-
-    // --- 5. OR UTILIZATION ---
-    const or_hours_needed = operations_actual * operation_time_with_prep;
-    const or_hours_available = data.operating_rooms * working_hours_per_year;
-    const or_utilization = or_hours_available > 0 ? (or_hours_needed / or_hours_available * 100) : 0;
-
-    results.or_utilization = {
-        value: or_utilization,
-        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(or_utilization) : 'N/A'
-    };
-
-    // --- BEDS UTILIZATION ---
-    const beds_needed = Math.ceil(operations_demand / 365 * 3); // Assuming 3 days stay?
-    const beds_utilization = data.beds > 0 ? (beds_needed / data.beds * 100) : 0;
-
-    results.beds_utilization = {
-        value: beds_utilization,
-        status: (typeof getUtilizationStatus !== 'undefined') ? getUtilizationStatus(beds_utilization) : 'N/A'
-    };
-
-    // --- 6. BOTTLENECK ---
-    const bottlenecks = [
-        { resource: 'Врачи', utilization: doctor_utilization, current: data.doctors },
-        { resource: 'Кабинеты', utilization: room_utilization, current: data.rooms },
-        { resource: 'Операционные', utilization: or_utilization, current: data.operating_rooms },
-        { resource: 'Койки', utilization: beds_utilization, current: data.beds }
-    ];
-    const bottleneck = bottlenecks.reduce((max, item) => item.utilization > max.utilization ? item : max);
-
-    results.bottleneck = bottleneck;
-
-    // --- STORE REVENUE RESULTS ---
-    results.revenue = {
-        total: revenue_total,
-        consultations: revenue_consultations,
-        operations: revenue_operations,
-        diagnostics: revenue_diagnostics,
-        followup: revenue_followup
-    };
-
-    // --- 8. EXPENSES ---
-    const payroll_gross = data.doctors * data.doctor_salary + 
-                          data.nurses * data.nurse_salary + 
-                          data.admins * data.admin_salary +
-                          data.service_staff * data.service_salary;
-    const payroll_total = payroll_gross * (1 + data.payroll_tax / 100);
-
-    const materials_consultations = consultations_actual * data.consultation_materials;
-    const materials_operations = operations_actual * data.operation_materials;
-    const materials_diagnostics = diagnostics_count * data.diagnostics_materials;
-    const materials_total = materials_consultations + materials_operations + materials_diagnostics;
-
-    const fixed_costs = data.rent + data.utilities + data.depreciation + data.it_systems + 
-                        data.marketing + data.insurance + data.other_expenses;
-
-    const expenses_total = payroll_total + materials_total + fixed_costs;
-
-    results.expenses = {
-        total: expenses_total,
-        payroll: payroll_total,
-        materials: materials_total,
-        fixed: fixed_costs
-    };
-
-    // --- 9. EBITDA ---
-    const ebitda = revenue_total - payroll_total - materials_total - (fixed_costs - data.depreciation);
-    const ebitda_margin = revenue_total > 0 ? (ebitda / revenue_total * 100) : 0;
-
-    results.ebitda = {
-        value: ebitda,
-        margin: ebitda_margin
-    };
-
-    // --- 10. NET PROFIT ---
-    const ebit = ebitda - data.depreciation;
-    const profit_tax_amount = ebit > 0 ? ebit * (data.profit_tax / 100) : 0;
-    const net_profit = ebit - profit_tax_amount;
-    const net_margin = revenue_total > 0 ? (net_profit / revenue_total * 100) : 0;
-
-    results.net_profit = {
-        value: net_profit,
-        margin: net_margin,
-        ebitda: ebitda,
-        depreciation: data.depreciation,
-        ebit: ebit,
-        tax: profit_tax_amount
-    };
-
-    // --- 11. BREAKEVEN ---
-    const variable_cost_per_patient = consultations_actual > 0 ? materials_total / consultations_actual : 0;
-    const avg_revenue_per_patient = consultations_actual > 0 ? revenue_total / consultations_actual : 0;
-    const contribution_margin = avg_revenue_per_patient - variable_cost_per_patient;
-    const breakeven_patients = contribution_margin > 0 ? Math.ceil((payroll_total + fixed_costs) / contribution_margin) : 0;
-    const breakeven_revenue = breakeven_patients * avg_revenue_per_patient;
-    const breakeven_days = working_days_per_year > 0 && consultations_actual > 0 ? Math.ceil(breakeven_patients / (consultations_actual / working_days_per_year)) : 0;
-    const safety_margin = consultations_actual > 0 ? ((consultations_actual - breakeven_patients) / consultations_actual * 100) : 0;
-
-    results.breakeven = {
-        patients: breakeven_patients,
-        revenue: breakeven_revenue,
-        days: breakeven_days,
-        safety_margin: safety_margin
-    };
-
-    // --- 12. ROI ---
-    results.roi = {
-        per_doctor: data.doctors > 0 ? net_profit / data.doctors : 0,
-        per_room: data.rooms > 0 ? net_profit / data.rooms : 0,
-        per_or: data.operating_rooms > 0 ? net_profit / data.operating_rooms : 0
-    };
-
-    // --- 13. PATIENT STRUCTURE ---
-    // Calculate effective Followup Rate for display
-    const effective_followup_rate = consultations_actual > 0 ? (followup_count / consultations_actual * 100) : 0;
-
-    results.patient_structure = {
-        consultations: consultations_actual,
-        operations: operations_actual,
-        operations_rate: consultations_actual > 0 ? (operations_actual / consultations_actual * 100) : 0,
-        diagnostics: diagnostics_count,
-        diagnostics_rate: data.diagnostics_rate,
-        followup: followup_count,
-        followup_rate: effective_followup_rate, // Calculated derived rate
-        total_visits: consultations_actual + operations_actual + diagnostics_count + followup_count, 
-        display_total: consultations_actual + operations_actual + diagnostics_count + followup_count,
-        unique_patients: consultations_actual
-    };
-
-    // --- 14. AVERAGES ---
-    results.averages = {
-        revenue_per_patient: consultations_actual > 0 ? revenue_total / consultations_actual : 0,
-        cost_per_patient: consultations_actual > 0 ? expenses_total / consultations_actual : 0,
-        margin_per_patient: consultations_actual > 0 ? (revenue_total - expenses_total) / consultations_actual : 0
-    };
-
-    // --- 15. RESOURCE ADEQUACY ---
-    const doctors_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.doctors * ((total_visits_demand) / consultations_capacity)) : data.doctors;
-    const rooms_needed = consultations_capacity > 0 && consultations_actual > 0 ? Math.ceil(data.rooms * ((total_visits_demand)  / consultations_capacity)) : data.rooms;
-    const or_needed = operations_capacity > 0 && operations_actual > 0 ? Math.ceil(data.operating_rooms * (operations_demand / operations_capacity)) : data.operating_rooms;
-    const nurses_needed = Math.ceil(doctors_needed * 1.2);
-
-    results.resource_adequacy = {
-        doctors: { have: data.doctors, need: doctors_needed, deficit: doctors_needed - data.doctors, utilization: doctor_utilization },
-        rooms: { have: data.rooms, need: rooms_needed, deficit: rooms_needed - data.rooms, utilization: room_utilization },
-        operating_rooms: { have: data.operating_rooms, need: or_needed, deficit: or_needed - data.operating_rooms, utilization: or_utilization },
-        beds: { have: data.beds, need: beds_needed, deficit: beds_needed - data.beds, utilization: beds_utilization },
-        nurses: { have: data.nurses, need: nurses_needed, deficit: nurses_needed - data.nurses, utilization: 0 }
-    };
-
-    return results;
-}
-        function getUtilizationStatus(utilization) {
-            if (utilization < 60) return 'low';
-            if (utilization < 85) return 'optimal';
-            if (utilization < 95) return 'high';
-            return 'critical';
-        }
-
-        function getUtilizationLabel(status) {
-            const labels = {
-                low: 'Недозагрузка',
-                optimal: 'Оптимально',
-                high: 'Высокая',
-                critical: 'Перегрузка'
-            };
-            return labels[status] || '';
-        }
-
-        // Форматирование чисел
-        function formatNumber(num, decimals = 0) {
-            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        }
-
-        function formatCurrency(num) {
-            return '$' + formatNumber(num, 2);
-        }
-
-        function formatPercent(num) {
-            return formatNumber(num, 1) + '%';
-        }
-
-        // Рендер результатов
-        function renderResults(results) {
-            const container = document.getElementById('results');
-            
-            let html = '<div class="metric-group">';
-            html += '<h2>ОПЕРАЦИОННЫЕ МЕТРИКИ</h2>';
-
-            // 1. Пропускная способность консультаций
-            html += '<div class="metric-card">';
-            html += '<h3>Пропускная способность (Визиты)</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Доступно визитов в год</span><span class="metric-value">${formatNumber(results.consultations.capacity)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Спрос (Визиты)</span><span class="metric-value">${formatNumber(results.consultations.demand)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Фактически визитов</span><span class="metric-value">${formatNumber(results.consultations.actual)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Фактически в день</span><span class="metric-value">${formatNumber(results.consultations.actual/250)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.consultations.utilization)}</span></div>`;
-            if (results.consultations.unmet > 0) {
-                html += `<div class="metric-row"><span class="metric-label">Неудовлетворённый спрос</span><span class="metric-value deficit">${formatNumber(results.consultations.unmet)} (${formatNumber((results.consultations.demand/results.consultations.capacity * 100) - 100)}%)</span></div>`;
-            }
-            html += '</div>';
-
-            // 2. Пропускная способность операций
-            html += '<div class="metric-card">';
-            html += '<h3>Пропускная способность операций</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Доступно в год</span><span class="metric-value">${formatNumber(results.operations.capacity)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Спрос (на основе уникальных)</span><span class="metric-value">${formatNumber(results.operations.demand)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Фактически</span><span class="metric-value">${formatNumber(results.operations.actual)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Загрузка</span><span class="metric-value">${formatPercent(results.operations.utilization)}</span></div>`;
-            if (results.operations.unmet > 0) {
-                html += `<div class="metric-row"><span class="metric-label">Неудовлетворённый спрос</span><span class="metric-value deficit">${formatNumber(results.operations.unmet)} (${formatNumber((results.operations.demand/results.operations.capacity * 100) - 100)}%)</span></div>`;
-            }
-            html += '</div>';
-
-            // 3-5. Утилизация
-            html += '<div class="metric-card">';
-            html += '<h3>Утилизация ресурсов</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Врачи</span><span class="metric-value">${formatPercent(results.doctor_utilization.value)} <span class="status-indicator status-${results.doctor_utilization.status}"></span> ${getUtilizationLabel(results.doctor_utilization.status)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Кабинеты</span><span class="metric-value">${formatPercent(results.room_utilization.value)} <span class="status-indicator status-${results.room_utilization.status}"></span> ${getUtilizationLabel(results.room_utilization.status)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Операционные</span><span class="metric-value">${formatPercent(results.or_utilization.value)} <span class="status-indicator status-${results.or_utilization.status}"></span> ${getUtilizationLabel(results.or_utilization.status)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Койки</span><span class="metric-value">${formatPercent(results.beds_utilization.value)} <span class="status-indicator status-${results.beds_utilization.status}"></span> ${getUtilizationLabel(results.beds_utilization.status)}</span></div>`;
-            html += '</div>';
-
-            
-
-            html += '</div>'; // Конец группы
-
-            // ФИНАНСОВЫЕ МЕТРИКИ
-            html += '<div class="metric-group">';
-            html += '<h2>ФИНАНСОВЫЕ МЕТРИКИ</h2>';
-
-            // 7. Выручка
-            html += '<div class="metric-card">';
-            html += '<h3>Годовая выручка</h3>';
-            html += `<div class="metric-row"><span class="metric-label"><strong>Общая сумма</strong></span><span class="metric-value"><strong>${formatCurrency(results.revenue.total)}</strong></span></div>`;
-            html += '<ul class="detail-list">';
-            html += `<li>Консультации: ${formatCurrency(results.revenue.consultations)}</li>`;
-            html += `<li>Операции: ${formatCurrency(results.revenue.operations)}</li>`;
-            html += `<li>Диагностика: ${formatCurrency(results.revenue.diagnostics)}</li>`;
-            html += `<li>Повторные приёмы: ${formatCurrency(results.revenue.followup)}</li>`;
-            html += '</ul>';
-            html += '</div>';
-
-            // 8. Расходы
-            html += '<div class="metric-card">';
-            html += '<h3>Годовые расходы</h3>';
-            html += `<div class="metric-row"><span class="metric-label"><strong>Общая сумма</strong></span><span class="metric-value"><strong>${formatCurrency(results.expenses.total)}</strong></span></div>`;
-            html += '<ul class="detail-list">';
-            html += `<li>Персонал: ${formatCurrency(results.expenses.payroll)}</li>`;
-            html += `<li>Материалы: ${formatCurrency(results.expenses.materials)}</li>`;
-            html += `<li>Постоянные расходы: ${formatCurrency(results.expenses.fixed)}</li>`;
-            html += '</ul>';
-            html += '</div>';
-
-            // 9. EBITDA
-            html += '<div class="metric-card">';
-            html += '<h3>EBITDA</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Сумма</span><span class="metric-value" style="color: ${results.ebitda.value >= 0 ? '#38a169' : '#e53e3e'}">${formatCurrency(results.ebitda.value)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">EBITDA Margin</span><span class="metric-value">${formatPercent(results.ebitda.margin)}</span></div>`;
-            html += '</div>';
-
-            // 10. Чистая прибыль
-            html += '<div class="metric-card">';
-            html += '<h3>Чистая прибыль</h3>';
-            html += `<div class="metric-row"><span class="metric-label"><strong>Сумма</strong></span><span class="metric-value" style="color: ${results.net_profit.value >= 0 ? '#38a169' : '#e53e3e'}"><strong>${formatCurrency(results.net_profit.value)}</strong></span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Net Margin</span><span class="metric-value">${formatPercent(results.net_profit.margin)}</span></div>`;
-            html += '<ul class="detail-list">';
-            html += `<li>EBITDA: ${formatCurrency(results.net_profit.ebitda)}</li>`;
-            html += `<li>Минус амортизация: ${formatCurrency(results.net_profit.depreciation)}</li>`;
-            html += `<li>= EBIT: ${formatCurrency(results.net_profit.ebit)}</li>`;
-            html += `<li>Минус налог: ${formatCurrency(results.net_profit.tax)}</li>`;
-            html += `<li>= Чистая прибыль: ${formatCurrency(results.net_profit.value)}</li>`;
-            html += '</ul>';
-            html += '</div>';
-
-            // 11. Точка безубыточности
-            html += '<div class="metric-card">';
-            html += '<h3>Точка безубыточности</h3>';
-            html += `<div class="metric-row"><span class="metric-label">В уникальных пациентах</span><span class="metric-value">${formatNumber(results.breakeven.patients)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">В деньгах</span><span class="metric-value">${formatCurrency(results.breakeven.revenue)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">В днях работы</span><span class="metric-value">${formatNumber(results.breakeven.days)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Запас прочности</span><span class="metric-value">${formatPercent(results.breakeven.safety_margin)}</span></div>`;
-            html += '</div>';
-
-            // 12. ROI
-            html += '<div class="metric-card">';
-            html += '<h3>ROI на ресурсы</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Прибыль на врача в год</span><span class="metric-value">${formatCurrency(results.roi.per_doctor)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Прибыль на кабинет в год</span><span class="metric-value">${formatCurrency(results.roi.per_room)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Прибыль на операционную в год</span><span class="metric-value">${formatCurrency(results.roi.per_or)}</span></div>`;
-            html += '</div>';
-
-            html += '</div>'; // Конец группы
-
-            // ПАЦИЕНТОПОТОК
-            html += '<div class="metric-group">';
-            html += '<h2>ПАЦИЕНТОПОТОК (Расчетный)</h2>';
-
-            // 13. Структура пациентов
-            html += '<div class="metric-card">';
-            html += '<h3>Структура пациентов</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Первичные консультации (Уник.)</span><span class="metric-value">${formatNumber(results.patient_structure.consultations)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Повторные приёмы (Расчет: ${formatPercent(results.patient_structure.followup_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.followup)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Операции (конверсия ${formatPercent(results.patient_structure.operations_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.operations)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Диагностика (${formatPercent(results.patient_structure.diagnostics_rate)})</span><span class="metric-value">${formatNumber(results.patient_structure.diagnostics)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label"><strong>Итого действий</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.display_total)}</strong></span></div>`;
-            html += `<div class="metric-row"><span class="metric-label"><strong>Уникальных пациентов</strong></span><span class="metric-value"><strong>${formatNumber(results.patient_structure.unique_patients)}</strong></span></div>`;
-            html += '</div>';
-
-            // 14. Средние показатели
-            html += '<div class="metric-card">';
-            html += '<h3>Средние показатели</h3>';
-            html += `<div class="metric-row"><span class="metric-label">Средний чек на пациента</span><span class="metric-value">${formatCurrency(results.averages.revenue_per_patient)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Себестоимость на пациента</span><span class="metric-value">${formatCurrency(results.averages.cost_per_patient)}</span></div>`;
-            html += `<div class="metric-row"><span class="metric-label">Маржа на пациента</span><span class="metric-value" style="color: ${results.averages.margin_per_patient >= 0 ? '#38a169' : '#e53e3e'}">${formatCurrency(results.averages.margin_per_patient)}</span></div>`;
-            html += '</div>';
-
-            html += '</div>'; // Конец группы
-
-            // ДОСТАТОЧНОСТЬ РЕСУРСОВ
-            html += '<div class="metric-group">';
-            html += '<h2>ДОСТАТОЧНОСТЬ РЕСУРСОВ</h2>';
-
-            html += '<div class="metric-card">';
-            html += '<h3>Анализ мощностей</h3>';
-            html += '<table class="resource-table">';
-            html += '<thead><tr><th>Ресурс</th><th>Есть</th><th>Нужно</th><th>Дефицит</th></tr></thead>';
-            html += '<tbody>';
-            
-            for (let [key, value] of Object.entries(results.resource_adequacy)) {
-                const resourceName = {
-                    doctors: 'Врачи',
-                    rooms: 'Кабинеты',
-                    operating_rooms: 'Операционные',
-                    beds: 'Койки',
-                    nurses: 'Медсёстры'
-                }[key];
-                
-                const deficitClass = value.deficit > 0 ? 'deficit' : 'surplus';
-                const deficitSign = value.deficit > 0 ? '+' : '';
-                
-                html += '<tr>';
-                html += `<td>${resourceName}</td>`;
-                html += `<td>${formatNumber(value.have)}</td>`;
-                html += `<td>${formatNumber(value.need)}</td>`;
-                html += `<td class="${deficitClass}">${deficitSign}${formatNumber(value.deficit)}</td>`;
-                html += '</tr>';
-            }
-            
-            html += '</tbody></table>';
-            html += '</div>';
-
-            html += '</div>'; // Конец группы
-
-            container.innerHTML = html;
-        }
-
-        // Режим сравнения
-        function toggleComparisonMode() {
-            AppState.comparisonMode = !AppState.comparisonMode;
-            
-            if (AppState.comparisonMode) {
-                renderComparisonView();
             } else {
                 document.getElementById('mainView').classList.remove('hidden');
                 document.getElementById('comparisonView').classList.add('hidden');
+                
+                const next = AppState.scenarios.find(s => s.id === id);
+                setFormData(next.parameters);
+                
+                if(next.results) renderResults(next.results, next.parameters);
+                else document.getElementById('results').innerHTML = '<p style="text-align:center; margin-top:50px; color:#a0aec0">Нажмите Рассчитать</p>';
             }
             
-            renderScenarioTabs();
+            renderTabs();
         }
 
-        function renderComparisonView() {
-            document.getElementById('mainView').classList.add('hidden');
-            const container = document.getElementById('comparisonView');
-            container.classList.remove('hidden');
-
-            // Проверка что все сценарии рассчитаны
-            const uncalculated = AppState.scenarios.filter(s => !s.results);
-            if (uncalculated.length > 0) {
-                container.innerHTML = `
-                    <h2>Сравнение сценариев</h2>
-                    <p style="color: #e53e3e; margin: 20px 0;">Сценарии не рассчитаны: ${uncalculated.map(s => s.name).join(', ')}</p>
-                    <p style="margin-bottom: 20px;">Пожалуйста, рассчитайте все сценарии перед сравнением.</p>
-                    <button class="btn" onclick="toggleComparisonMode()">← Вернуться к редактированию</button>
-                `;
-                return;
-            }
-
-            let html = '<h2>Сравнение всех сценариев</h2>';
-            html += '<div id="comparisonTable"></div>';
-            html += '<button class="btn" style="margin-top: 30px;" onclick="toggleComparisonMode()">← Вернуться к редактированию</button>';
-
-            container.innerHTML = html;
+        function renderTabs() {
+            const container = document.getElementById('scenarioTabs');
+            container.innerHTML = '';
             
-            // Автоматически сравнить все 2 сценария
-            renderComparisonTable(AppState.scenarios);
-        }
-
-        function renderComparisonTable(scenarios) {
-            const container = document.getElementById('comparisonTable');
-
-            let html = '<table class="comparison-table">';
-            html += '<thead><tr>';
-            html += '<th>Метрика</th>';
-            scenarios.forEach(s => {
-                html += `<th>${s.name}</th>`;
-            });
-            html += '</tr></thead>';
-            html += '<tbody>';
-
-            // ОПЕРАЦИОННЫЕ МЕТРИКИ
-            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ОПЕРАЦИОННЫЕ МЕТРИКИ</td></tr>';
-            
-            html += addComparisonRow('Консультации (факт)', scenarios, s => formatNumber(s.results.consultations.actual));
-            html += addComparisonRow('Загрузка консультаций', scenarios, s => formatPercent(s.results.consultations.utilization));
-            html += addComparisonRow('Операции (факт)', scenarios, s => formatNumber(s.results.operations.actual));
-            html += addComparisonRow('Загрузка операций', scenarios, s => formatPercent(s.results.operations.utilization));
-            html += addComparisonRow('Утилизация врачей', scenarios, s => formatPercent(s.results.doctor_utilization.value));
-            html += addComparisonRow('Утилизация кабинетов', scenarios, s => formatPercent(s.results.room_utilization.value));
-            html += addComparisonRow('Утилизация операционных', scenarios, s => formatPercent(s.results.or_utilization.value));
-            html += addComparisonRow('Утилизация коек', scenarios, s => formatPercent(s.results.beds_utilization.value));
-            html += addComparisonRow('Узкое место', scenarios, s => s.results.bottleneck.resource);
-
-            // ФИНАНСОВЫЕ МЕТРИКИ
-            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ФИНАНСОВЫЕ МЕТРИКИ</td></tr>';
-            
-            html += addComparisonRow('Годовая выручка', scenarios, s => formatCurrency(s.results.revenue.total));
-            html += addComparisonRow('Годовые расходы', scenarios, s => formatCurrency(s.results.expenses.total));
-            html += addComparisonRow('EBITDA', scenarios, s => formatCurrency(s.results.ebitda.value));
-            html += addComparisonRow('EBITDA Margin', scenarios, s => formatPercent(s.results.ebitda.margin));
-            html += addComparisonRow('Чистая прибыль', scenarios, s => formatCurrency(s.results.net_profit.value));
-            html += addComparisonRow('Net Margin', scenarios, s => formatPercent(s.results.net_profit.margin));
-            html += addComparisonRow('Точка безубыточности (пациенты)', scenarios, s => formatNumber(s.results.breakeven.patients));
-            html += addComparisonRow('Запас прочности', scenarios, s => formatPercent(s.results.breakeven.safety_margin));
-            html += addComparisonRow('ROI на врача', scenarios, s => formatCurrency(s.results.roi.per_doctor));
-
-            // ДОСТАТОЧНОСТЬ РЕСУРСОВ
-            html += '<tr class="group-header"><td colspan="' + (scenarios.length + 1) + '">ДОСТАТОЧНОСТЬ РЕСУРСОВ</td></tr>';
-            
-            html += addComparisonRow('Врачи (есть)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.have));
-            html += addComparisonRow('Врачи (нужно)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.need));
-            html += addComparisonRow('Врачи (дефицит)', scenarios, s => formatNumber(s.results.resource_adequacy.doctors.deficit));
-            html += addComparisonRow('Кабинеты (есть)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.have));
-            html += addComparisonRow('Кабинеты (нужно)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.need));
-            html += addComparisonRow('Кабинеты (дефицит)', scenarios, s => formatNumber(s.results.resource_adequacy.rooms.deficit));
-            html += addComparisonRow('Койки (есть)', scenarios, s => formatNumber(s.results.resource_adequacy.beds.have));
-            html += addComparisonRow('Койки (нужно)', scenarios, s => formatNumber(s.results.resource_adequacy.beds.need));
-            html += addComparisonRow('Койки (дефицит)', scenarios, s => formatNumber(s.results.resource_adequacy.beds.deficit));
-
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
-
-        function addComparisonRow(label, scenarios, valueGetter) {
-            let html = '<tr>';
-            html += `<td>${label}</td>`;
-            
-            scenarios.forEach(s => {
-                const value = valueGetter(s);
-                html += `<td>${value}</td>`;
+            AppState.scenarios.forEach(s => {
+                const btn = document.createElement('div');
+                btn.className = `tab ${s.id === AppState.activeScenarioId ? 'active' : ''}`;
+                btn.innerText = s.name;
+                btn.onclick = () => switchView(s.id);
+                container.appendChild(btn);
             });
 
-            html += '</tr>';
-            return html;
+            const cmpBtn = document.createElement('div');
+            cmpBtn.className = `tab compare-tab ${AppState.activeScenarioId === 'compare' ? 'active' : ''}`;
+            cmpBtn.innerText = 'Сравнение';
+            cmpBtn.onclick = () => switchView('compare');
+            container.appendChild(cmpBtn);
         }
 
-        // Инициализация при загрузке
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('Application initializing...');
-            
-            loadFromLocalStorage();
-            renderScenarioTabs();
-            
-            const active = getActiveScenario();
-            if (active) {
-                setFormData(active.parameters);
-                if (active.results) {
-                    renderResults(active.results);
-                }
+        function getFormData() {
+            const form = document.getElementById('clinicForm');
+            const data = {};
+            new FormData(form).forEach((v, k) => data[k] = parseFloat(v) || 0);
+            return data;
+        }
+
+        function setFormData(data) {
+            const form = document.getElementById('clinicForm');
+            Object.entries(data).forEach(([k, v]) => {
+                if(form.elements[k]) form.elements[k].value = v;
+            });
+        }
+
+        function saveData() { localStorage.setItem('sim_vBedDays', JSON.stringify(AppState)); }
+        
+        function init() {
+            const saved = localStorage.getItem('sim_vBedDays');
+            if(saved) {
+                const parsed = JSON.parse(saved);
+                AppState.scenarios = parsed.scenarios;
+                AppState.activeScenarioId = parsed.activeScenarioId || 's1';
+            } else {
+                const defaults = getFormData();
+                AppState.scenarios = [
+                    { id: 's1', name: 'Сценарий 1', parameters: {...defaults}, results: null },
+                    { id: 's2', name: 'Сценарий 2', parameters: {...defaults}, results: null }
+                ];
+                AppState.activeScenarioId = 's1';
             }
             
-            // Автосохранение при изменении полей
-            document.getElementById('clinicForm').addEventListener('input', function() {
-                const scenario = getActiveScenario();
-                if (scenario) {
-                    scenario.parameters = getFormData();
-                    saveToLocalStorage();
-                }
-            });
-            
-            console.log('Application initialized');
-        });
+            switchView(AppState.activeScenarioId);
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
